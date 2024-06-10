@@ -1238,6 +1238,155 @@ Average pooling, as the name suggests, calculates the average value within the f
 
 Global average pooling is a pooling operation that takes the average of the entire input feature map, outputting a single value. This technique is often used as an alternative to fully connected layers in deep learning models, particularly in image classification tasks. Global average pooling reduces the number of parameters, thus decreasing the risk of overfitting and reducing computational complexity.
 
+\section{Convolutional Neural Networks (CNNs)}
+
+Convolutional Neural Networks (CNNs) are a type of deep learning model designed to process structured grid data, such as images. CNNs leverage the spatial structure of images to effectively extract features and perform tasks like image classification, object detection, and segmentation.
+
+\subsection{Basic Components of CNNs}
+
+CNNs consist of several types of layers that work together to learn hierarchical representations of input data. The primary components of CNNs are convolutional layers, pooling layers, and fully connected layers.
+
+\subsubsection{Convolutional Layers}
+
+The convolutional layer is the core building block of a CNN. It applies convolution operations to the input data, which involves sliding a set of learnable filters (also known as kernels) over the input. Each filter computes a dot product between the filter weights and the input values, producing an activation map that highlights specific features.
+
+\paragraph{Mathematical Formulation}
+
+Given an input image \( I \) of dimensions \( H \times W \times C \) (height, width, and channels), and a filter \( K \) of size \( k_h \times k_w \times C \), the convolution operation can be expressed as:
+
+\[
+(I * K)(i, j) = \sum_{m=1}^{k_h} \sum_{n=1}^{k_w} \sum_{c=1}^{C} I(i+m-1, j+n-1, c) \cdot K(m, n, c)
+\]
+
+where \((i, j)\) are the coordinates of the output activation map, and the summations iterate over the filter dimensions and input channels.
+
+\paragraph{Activation Functions}
+
+After applying the convolution operation, the activation map is passed through a non-linear activation function. The most commonly used activation function in CNNs is the Rectified Linear Unit (ReLU), defined as:
+
+\[
+\text{ReLU}(x) = \max(0, x)
+\]
+
+ReLU introduces non-linearity into the model, allowing it to learn complex patterns.
+
+\subsubsection{Pooling Layers}
+
+Pooling layers reduce the spatial dimensions of the activation maps, which helps decrease the computational load and mitigate overfitting. The two common types of pooling are max pooling and average pooling.
+
+\paragraph{Max Pooling}
+
+Max pooling selects the maximum value within a pooling window, effectively down-sampling the input while retaining the most prominent features.
+
+\[
+\text{MaxPool}(x) = \max_{i, j \in \text{window}} x(i, j)
+\]
+
+\paragraph{Average Pooling}
+
+Average pooling computes the average value within the pooling window, providing a smoothed version of the input.
+
+\[
+\text{AvgPool}(x) = \frac{1}{|\text{window}|} \sum_{i, j \in \text{window}} x(i, j)
+\]
+
+\subsubsection{Fully Connected Layers}
+
+Fully connected layers (FC layers) are typically used at the end of a CNN architecture to perform high-level reasoning. These layers flatten the spatial dimensions of the feature maps and connect each neuron to every neuron in the next layer.
+
+\[
+y = \sigma(Wx + b)
+\]
+
+where \( W \) is the weight matrix, \( x \) is the input vector, \( b \) is the bias vector, and \( \sigma \) is the activation function (e.g., softmax for classification tasks).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.3]{./media/cnn.jpeg}
+    \caption{CNN Architecture}
+    \label{fig:cnn_arch}
+\end{figure}
+
+\subsection{Training CNNs}
+
+Training CNNs involves optimizing the network parameters to minimize a loss function. This is typically done using stochastic gradient descent (SGD) or its variants (e.g., Adam, RMSprop). The gradients of the loss function with respect to the network parameters are computed using backpropagation.
+
+\subsubsection{Backpropagation}
+
+Backpropagation in CNNs involves computing the gradient of the loss function with respect to each filter's weights. This is achieved by applying the chain rule to propagate the gradients backward through the network.
+
+For a given loss \( L \) and filter \( K \), the gradient of the loss with respect to the filter is:
+
+\[
+\frac{\partial L}{\partial K} = \sum_{i, j} \frac{\partial L}{\partial (I * K)(i, j)} \cdot \frac{\partial (I * K)(i, j)}{\partial K}
+\]
+
+\subsubsection{Loss Functions}
+
+Common loss functions used in training CNNs include cross-entropy loss for classification tasks and mean squared error (MSE) for regression tasks.
+
+\paragraph{Cross-Entropy Loss}
+
+For a classification task with true labels \( y \) and predicted probabilities \( \hat{y} \), the cross-entropy loss is defined as:
+
+\[
+L = -\sum_{i=1}^{N} y_i \log(\hat{y}_i)
+\]
+
+where \( N \) is the number of classes.
+
+\paragraph{Mean Squared Error (MSE)}
+
+For a regression task with true values \( y \) and predicted values \( \hat{y} \), the MSE is defined as:
+
+\[
+L = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+\]
+
+\subsection{Enhancements to CNNs}
+
+\subsubsection{Batch Normalization}
+
+Batch normalization normalizes the activations of each layer using the mean and variance of the current mini-batch. This technique helps stabilize the training process and allows for higher learning rates.
+
+\[
+\hat{x} = \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}
+\]
+
+where \( \mu_B \) and \( \sigma_B^2 \) are the mean and variance of the mini-batch, and \( \epsilon \) is a small constant for numerical stability.
+
+\subsubsection{Dropout}
+
+Dropout is a regularization technique that involves randomly setting a fraction of the activations to zero during training. This prevents the network from becoming overly reliant on specific neurons, thus reducing overfitting.
+
+\[
+y = \frac{1}{p} \sum_{i=1}^{N} \text{drop}(h_i)
+\]
+
+where \( \text{drop}(h_i) \) is the dropout operation applied to the activation \( h_i \) with a probability \( p \).
+
+\subsubsection{Transfer Learning}
+
+Transfer learning leverages pre-trained CNNs on large datasets (e.g., ImageNet) to perform tasks on smaller, task-specific datasets. This approach involves fine-tuning the pre-trained model or using it as a fixed feature extractor.
+
+\paragraph{Fine-Tuning}
+
+Fine-tuning involves updating the weights of the pre-trained model on the new dataset. Typically, earlier layers are frozen, and only the later layers are fine-tuned.
+
+\paragraph{Feature Extraction}
+
+In feature extraction, the pre-trained model is used to extract features from the new dataset, which are then fed into a separate classifier.
+
+\subsection{Challenges and Techniques}
+
+Training CNNs can present several challenges, such as vanishing/exploding gradients, overfitting, and high computational requirements. Various techniques have been developed to address these challenges:
+
+\textbf{Vanishing/Exploding Gradients:} Proper initialization methods (e.g., Xavier, He initialization) and normalization techniques (e.g., batch normalization) help mitigate this issue.
+
+\textbf{Overfitting:} Regularization techniques like dropout, data augmentation, and early stopping help prevent overfitting.
+
+\textbf{Computational Efficiency:} Using architectures like MobileNet and techniques like model pruning and quantization can reduce the computational burden of CNNs.
+
 
 \section{Recurrent Neural Networks (RNN) and Long Short-Term Memory (LSTM)}
 
