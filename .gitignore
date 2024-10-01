@@ -1,0 +1,8 @@
+.DS_Store
+*.gz
+*.fdb_latexmk
+*.fls
+*.out
+*.aux
+*.log
+ml_study_guide.toc

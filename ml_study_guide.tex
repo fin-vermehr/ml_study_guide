@@ -7,6 +7,8 @@
 \usepackage{tikz}
 \usepackage{amssymb}
 \usepackage{hyperref}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 
 \usetikzlibrary{positioning}
 
@@ -159,6 +161,13 @@ where:
 \item $\beta_i$ are the coefficients
 \end{itemize}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.7]{./media/sigmoid.png}
+    \caption{Sigmoid function}
+    \label{fig:f_sigmoid}
+\end{figure}
+
 \subsubsection{Cost Function}
 
 The cost function for logistic regression is derived from the cross-entropy loss. For a single data point, the cost function is:
@@ -224,6 +233,13 @@ where:
 \item $y_i \in {-1, 1}$ are the target class labels
 \item $m$ is the number of data points
 \end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=2.5]{./media/svm.png}
+    \caption{SVM}
+    \label{fig:svm}
+\end{figure}
 
 \subsubsection{Kernel Functions}
 
@@ -356,6 +372,13 @@ The agglomerative hierarchical clustering algorithm proceeds as follows:
 \end{enumerate}
 
 The divisive hierarchical clustering algorithm is less common and works by initially treating the entire dataset as a single cluster, then recursively splitting clusters into smaller clusters until each data point forms its own cluster.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{./media/agg_clustering.png}
+    \caption{Agglomerative Clustering}
+    \label{fig:svm}
+\end{figure}
 
 \subsubsection{Advantages}
 Some advantages of hierarchical clustering include:
@@ -578,6 +601,36 @@ Momentum is a technique that accelerates gradient descent and helps overcome loc
 \end{align*}
 where $\gamma$ is the momentum coefficient (typically between 0.9 and 0.99).
 
+The momentum term increases for dimensions whose gradients point in the same directions and reduces updates for dimensions whose gradients change directions. As a result, we gain faster convergence and reduced oscillation.
+
+\subsection{AdaGrad}
+
+\textbf{Gradient Accumulation:}
+\[
+G_{t,i} = \sum_{k=1}^{t} g_{k,i}^2
+\]
+
+\textbf{Parameter Update:}
+\[
+\theta_{t+1,i} = \theta_{t,i} - \frac{\eta}{\sqrt{G_{t,i}} + \epsilon} g_{t,i}
+\]
+
+where:
+\begin{itemize}
+    \item \( \theta_{t,i} \) is the current parameter.
+    \item \( \theta_{t+1,i} \) is the updated parameter.
+    \item \( \eta \) is the learning rate.
+    \item \( g_{k,i} \) is the gradient of the loss function with respect to parameter \( \theta_i \) at step \( k \).
+    \item \( G_{t,i} \) is the accumulated sum of squared gradients up to time \( t \).
+    \item \( \epsilon \) is a small constant for numerical stability (typically \( 10^{-8} \)).
+\end{itemize}
+
+\textbf{Diminishing Learning Rates}:
+   \begin{itemize}
+       \item The accumulated sum of squared gradients \( G_{t,i} \) keeps growing over time.
+       \item This leads to the learning rates becoming very small, which can slow down convergence significantly or cause the training to stop prematurely.
+   \end{itemize}
+
 \subsection{RMSprop}
 
 RMSprop (Root Mean Square Propagation) is an optimization algorithm that adapts the learning rate for each parameter based on the moving average of the squared gradients:
@@ -587,6 +640,8 @@ RMSprop (Root Mean Square Propagation) is an optimization algorithm that adapts 
 \boldsymbol{\theta} &:= \boldsymbol{\theta} - \frac{\alpha}{\sqrt{\mathbf{s} + \epsilon}} \nabla \\J(\boldsymbol{\theta})
 \end{align*}
 where $\rho$ is the decay rate (typically between 0.9 and 0.99), and $\epsilon$ is a small constant to prevent division by zero.
+
+RMSprop addresses the limitation of AdaGrad by using a moving average of the squared gradients instead of the cumulative sum. This prevents the learning rate from diminishing too quickly, ensuring that the optimization process remains effective throughout the training. The moving average allows RMSprop to maintain a more balanced and consistent learning rate, leading to better performance, especially in non-stationary settings.
 
 \subsection{ADAM}
 
@@ -926,6 +981,13 @@ The Receiver Operating Characteristic (ROC) curve is a graphical representation 
 
 The ROC curve is created by varying the classification threshold and calculating the TPR and FPR at each threshold. A model with perfect classification performance would have an ROC curve that goes directly from (0, 0) to (0, 1) and then to (1, 1). A model with random classification performance would have an ROC curve that follows the diagonal line from (0, 0) to (1, 1).
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.7]{./media/roc.png}
+    \caption{ROC Curve}
+    \label{fig:roc}
+\end{figure}
+
 The Area Under the ROC Curve (AUC) is a single scalar value that measures the overall performance of a binary classifier. It is the area under the ROC curve and ranges from 0 to 1, where a higher value indicates better classification performance. The AUC can be interpreted as the probability that a randomly chosen positive instance will have a higher predicted probability than a randomly chosen negative instance.
 
 
@@ -972,6 +1034,9 @@ $R^2$ ranges from 0 to 1, with higher values indicating better model performance
 
 Different regression evaluation metrics provide different insights into the performance of a model. MAE and RMSE focus on the average magnitude of errors, with RMSE being more sensitive to outliers. MSE emphasizes larger errors due to the squaring operation. $R^2$ provides a proportion of the variance in the true values that can be explained by the model. It is important to consider multiple evaluation metrics when assessing the performance of a regression model, as each metric has its advantages and limitations.
 \subsection{Clustering Model Evaluation Metrics}
+
+% TODO: Come back to this
+
 \subsubsection{Silhouette Score}
 
 The Silhouette Score is an internal evaluation metric that measures the cohesion and separation of clusters. It is calculated for each data point in the dataset and then averaged to obtain the overall score. The Silhouette Score ranges from -1 to 1, with higher values indicating better clustering quality. A high Silhouette Score suggests that data points within a cluster are close to each other and far from points in other clusters.
@@ -1048,6 +1113,19 @@ In machine learning, the bias/variance trade-off is a fundamental concept that h
 \end{itemize}
 The bias/variance trade-off is the balance between the model's complexity and its ability to generalize to new data. A model that is too simple will have high bias and low variance, while a model that is too complex will have low bias and high variance. The goal is to find a balance between bias and variance that results in the lowest overall prediction error.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{./media/bias_variance.png}
+    \caption{Examples of high bias/variance}
+    \label{fig:variance}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.3]{./media/bias_graph.png}
+    \caption{Bias Variance}
+    \label{fig:bias}
+\end{figure}
+
 \section{Regularization Techniques}
 
 Regularization techniques are used in machine learning to reduce the complexity of a model and prevent overfitting by adding a penalty term to the objective function. This penalty term discourages the model from assigning large weights to the features, which can lead to overfitting. Some common regularization techniques are:
@@ -1106,6 +1184,15 @@ The mean and variance are computed for each feature in the mini-batch and used t
 In addition to improving convergence, Batch Normalization has been shown to have a regularizing effect, reducing the need for other regularization techniques like dropout. However, it is dependent on the batch size and can be sensitive to the choice of the mini-batch.
 
 Both Layer Normalization and Batch Normalization are widely used in deep learning, and the choice between them depends on the specific architecture and problem. Layer Normalization is more suited for recurrent neural networks (RNNs) and networks with variable-sized inputs, while Batch Normalization is commonly used in convolutional neural networks (CNNs) and feedforward networks.
+
+During inference, batch normalization uses the running mean and variance accumulated during training, not the statistics of the current mini-batch.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{./media/batch_norm.png}
+    \caption{Batch Norm Diagram}
+    \label{fig:BN}
+\end{figure}
 
 \section{Handling Data}
 
@@ -1203,6 +1290,8 @@ b^{(l)} = b^{(l)} - \eta \frac{\partial C}{\partial b^{(l)}}
 \end{equation}
 where $\eta$ is the learning rate, a hyperparameter that controls the step size of the gradient descent update.
 
+To fully understand the backpropagation step, check out this \href{https://hmkcode.com/ai/backpropagation-step-by-step/}{step-by-step backpropogation} guide.
+
 \subsection{Activation Functions}
 
 Activation functions are applied to the output of each neuron in the hidden layers and determine whether the neuron should be "activated" based on its input. Some common activation functions and their intuitions are:
@@ -1290,6 +1379,8 @@ Average pooling computes the average value within the pooling window, providing 
 \text{AvgPool}(x) = \frac{1}{|\text{window}|} \sum_{i, j \in \text{window}} x(i, j)
 \]
 
+For awesome visualizations of some of techniques here (and more), checkout \href{https://animatedai.github.io/}{Animated AI}
+
 \subsubsection{Fully Connected Layers}
 
 Fully connected layers (FC layers) are typically used at the end of a CNN architecture to perform high-level reasoning. These layers flatten the spatial dimensions of the feature maps and connect each neuron to every neuron in the next layer.
@@ -1306,6 +1397,53 @@ where \( W \) is the weight matrix, \( x \) is the input vector, \( b \) is the 
     \caption{CNN Architecture}
     \label{fig:cnn_arch}
 \end{figure}
+
+\subsubsection{Receptive Fields in CNNs}
+
+\textbf{Receptive Field:}
+The receptive field of a neuron in a Convolutional Neural Network (CNN) refers to the region of the input image that affects that neuron's output. It represents the spatial extent of the input that contributes to the activation of a particular neuron.
+
+\textbf{Importance:}
+Understanding the receptive field is crucial for designing CNN architectures, as it affects the network's ability to capture spatial hierarchies and patterns in the input data.
+
+\paragraph{Kernel Sizes and Receptive Field}
+
+\textbf{3x3 Kernels:}
+\begin{itemize}
+    \item \textit{Receptive Field:} Smaller receptive field per layer.
+    \item \textit{Computation:} Computationally efficient, less number of parameters.
+    \item \textit{Accuracy:} Often used in modern architectures (e.g., VGG, ResNet) due to the ability to stack multiple layers to capture complex features while maintaining computational efficiency.
+\end{itemize}
+
+\textbf{5x5 Kernels:}
+\begin{itemize}
+    \item \textit{Receptive Field:} Larger receptive field per layer compared to 3x3 kernels.
+    \item \textit{Computation:} More computationally intensive, larger number of parameters.
+    \item \textit{Accuracy:} Can capture larger patterns and context in a single layer, but may lead to overfitting and higher computational costs if not managed properly.
+\end{itemize}
+
+\textbf{Larger Kernels (e.g., 7x7, 11x11):}
+\begin{itemize}
+    \item \textit{Receptive Field:} Significantly larger receptive field per layer.
+    \item \textit{Computation:} Substantially more computationally intensive, significantly larger number of parameters.
+    \item \textit{Accuracy:} Useful in early layers to capture very large spatial patterns, but typically replaced with smaller kernels in deeper layers for efficiency and better generalization.
+\end{itemize}
+
+\textbf{Trade-offs:}
+\begin{itemize}
+    \item Using smaller kernels (e.g., 3x3) allows deeper networks with fewer parameters and better regularization properties.
+    \item Larger kernels increase the receptive field more rapidly but at the cost of higher computational load and risk of overfitting.
+    \item Modern CNN architectures often use a combination of small kernels with deeper architectures to achieve a balance between receptive field size, computational efficiency, and accuracy.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.3]{./media/receptive_field.png}
+    \caption{Receptive Field of 3x3}
+    \label{fig:receptive_field}
+\end{figure}
+
+For a more comprehensive article, \href{https://theaisummer.com/receptive-field/}{check out this guide}
 
 \subsection{Training CNNs}
 
@@ -1445,6 +1583,13 @@ These gates allow the LSTM to selectively update, retain, or output information 
 
 In addition to the gates, the LSTM cell also has a mechanism to update the memory cell state itself, which typically involves the use of a pointwise multiplication operation with the input and forget gate outputs, as well as a pointwise addition operation with the new input. The memory cell state is updated using its own weight matrix and an activation function, often the hyperbolic tangent (tanh) function.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.3]{./media/lstm.png}
+    \caption{LSTM Architecture}
+    \label{fig:lstm}
+\end{figure}
+
 \subsection{Gated Recurrent Units (GRU)}
 
 Gated Recurrent Units (GRU) are another advanced type of RNN architecture that addresses the vanishing and exploding gradient problem, similar to LSTMs. GRUs simplify the LSTM architecture by combining the forget and input gates into a single "update gate." As a result, GRUs have fewer parameters and can be computationally more efficient than LSTMs, while still being able to capture long-range dependencies.
@@ -1523,6 +1668,13 @@ Teacher forcing is a training technique used in sequence-to-sequence models, whe
 \end{itemize}
 To mitigate the issues caused by teacher forcing, researchers have proposed techniques such as scheduled sampling, which combines the use of true target tokens and model predictions during training to make the training and inference scenarios more similar.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.3]{./media/teacher.png}
+    \caption{Teacher Forced}
+    \label{fig:teacher}
+\end{figure}
+
 \section{Transformer Architecture}
 
 The Transformer architecture, introduced by Vaswani et al. in the paper "Attention is All You Need," is a groundbreaking neural network architecture designed for sequence-to-sequence tasks. It has achieved state-of-the-art performance on a wide range of natural language processing tasks, such as machine translation, text summarization, and sentiment analysis. The key innovation of the Transformer architecture is the use of self-attention mechanisms, which enable the model to capture dependencies between all input tokens, regardless of their distance in the sequence.
@@ -1544,6 +1696,21 @@ Finally, the attention weights are used to create a weighted sum of the Value ve
 
 In the multi-head self-attention mechanism, multiple sets of Query, Key, and Value vectors are generated using different weight matrices. This allows the model to attend to different aspects of the input sequence simultaneously, capturing various relationships between the tokens. The outputs from all attention heads are then concatenated and linearly transformed to produce the final output of the multi-head self-attention layer.
 $$Output = \text{softmax} \left( \frac{QK^T}{\sqrt{d_k}} \right) V $$
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.2]{./media/attention_head.png}
+    \caption{Attention Head}
+    \label{fig:transformer}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.2]{./media/transformer.png}
+    \caption{Transformer Architecture}
+    \label{fig:transformer}
+\end{figure}
+
 \subsubsection{Position-Wise Feedforward Neural Networks}
 In the Transformer architecture, the Position-wise Feedforward Neural Network (FFNN) is an essential component of both the encoder and decoder layers. It is applied to each token's output from the multi-head self-attention mechanism independently and identically, allowing the model to learn non-linear interactions between the token features.
 
@@ -1633,6 +1800,84 @@ Model size reduction aims to reduce the number of parameters in a neural network
 \subsubsection{Network Architecture Search}
 
 Network architecture search (NAS) is an automated process that explores different neural network architectures to find an optimal configuration with fewer parameters and lower computational requirements while maintaining performance. NAS algorithms can be guided by various search strategies, such as evolutionary algorithms, reinforcement learning, or gradient-based optimization.
+
+Neural Architecture Search (NAS) is an automated process of designing neural network architectures. NAS aims to identify the optimal architecture for a given task by exploring a large search space of potential designs. This approach has shown promise in improving the performance of neural networks in various domains, including computer vision (CV) and natural language processing (NLP).
+
+\subsubsection{Components of NAS}
+NAS involves three main components:
+\begin{enumerate}
+    \item \textbf{Search Space:} The set of all possible architectures that can be explored. This includes various types of layers, connections, and hyperparameters.
+    \item \textbf{Search Strategy:} The method used to explore the search space. Common strategies include reinforcement learning, evolutionary algorithms, and gradient-based methods.
+    \item \textbf{Evaluation Strategy:} The approach for assessing the performance of candidate architectures. This often involves training and validating the model on a specific dataset.
+\end{enumerate}
+
+\subsubsection{Search Strategies}
+\begin{itemize}
+    \item \textbf{Reinforcement Learning (RL):}
+    \begin{itemize}
+        \item RL-based NAS uses an agent to sample architectures from the search space. The agent receives rewards based on the performance of the sampled architectures and updates its policy to improve future samples.
+        \item Example: \textit{NASNet} by Google, which uses a recurrent neural network (RNN) controller trained with RL to generate network architectures.
+    \end{itemize}
+    \item \textbf{Evolutionary Algorithms:}
+    \begin{itemize}
+        \item Evolutionary algorithms simulate the process of natural selection by evolving a population of architectures over successive generations. Mutations and crossovers are applied to generate new architectures, which are then evaluated and selected based on their performance.
+        \item Example: \textit{AmoebaNet} uses an evolutionary approach to optimize convolutional neural network (CNN) architectures.
+    \end{itemize}
+    \item \textbf{Gradient-Based Methods:}
+    \begin{itemize}
+        \item Gradient-based NAS leverages gradient descent to optimize the architecture parameters directly. This approach is often faster and more efficient than RL or evolutionary algorithms.
+        \item Example: \textit{DARTS (Differentiable Architecture Search)} formulates the architecture search problem as a continuous optimization task, allowing the use of gradient descent.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Applications in Computer Vision}
+NAS has been successfully applied to various tasks in computer vision, resulting in state-of-the-art performance on several benchmarks.
+\begin{itemize}
+    \item \textbf{Image Classification:}
+    \begin{itemize}
+        \item \textit{NASNet} and \textit{AmoebaNet} have achieved top performance on the ImageNet classification benchmark.
+    \end{itemize}
+    \item \textbf{Object Detection:}
+    \begin{itemize}
+        \item NAS methods have been used to design efficient and accurate object detection models. For example, \textit{NAS-FPN} employs NAS to optimize feature pyramid networks for object detection tasks.
+    \end{itemize}
+    \item \textbf{Semantic Segmentation:}
+    \begin{itemize}
+        \item NAS has been utilized to create architectures for semantic segmentation, such as \textit{Auto-DeepLab}, which searches for optimal architectures for pixel-wise segmentation tasks.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Applications in Natural Language Processing}
+NAS has also demonstrated success in optimizing architectures for NLP tasks, enhancing the performance of various models.
+\begin{itemize}
+    \item \textbf{Language Modeling:}
+    \begin{itemize}
+        \item NAS has been used to design better RNN and Transformer architectures for language modeling. For example, \textit{ENAS (Efficient Neural Architecture Search)} applies a shared parameters strategy to efficiently search for optimal RNN architectures.
+    \end{itemize}
+    \item \textbf{Text Classification:}
+    \begin{itemize}
+        \item NAS has been employed to create models for text classification tasks, improving accuracy and efficiency. The optimized architectures often leverage attention mechanisms and hierarchical structures.
+    \end{itemize}
+    \item \textbf{Machine Translation:}
+    \begin{itemize}
+        \item NAS has been applied to design more effective encoder-decoder architectures for machine translation, resulting in models that offer better translation quality with reduced computational costs.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Challenges and Future Directions}
+While NAS offers significant advantages, it also presents several challenges:
+\begin{itemize}
+    \item \textbf{Computational Cost:} NAS can be computationally expensive, as it involves training and evaluating numerous architectures.
+    \item \textbf{Search Space Design:} Defining an appropriate and manageable search space is crucial for the success of NAS.
+    \item \textbf{Generalization:} Ensuring that the architectures found by NAS generalize well to different datasets and tasks is a key concern.
+\end{itemize}
+
+Future directions in NAS research include:
+\begin{itemize}
+    \item \textbf{Efficient NAS:} Developing methods to reduce the computational cost of NAS, such as weight-sharing and one-shot models.
+    \item \textbf{Transferable NAS:} Creating NAS methods that can transfer learned architectures across different tasks and domains.
+    \item \textbf{NAS for Specific Domains:} Tailoring NAS approaches for specialized domains, such as medical imaging and autonomous driving.
+\end{itemize}
 
 \subsubsection{Weight Sharing and Quantization}
 
@@ -1809,7 +2054,7 @@ RoBERTa (Robustly Optimized BERT Approach): RoBERTa is an optimized version of B
 \end{itemize}
 
 \subsection{T5: Text-to-Text Transfer Transformer}
-T5 is a transformer model introduced by that unifies various NLP tasks into a single text-to-text format. The main idea behind T5 is to cast all NLP tasks as a sequence-to-sequence problem, where both input and output are text sequences. This allows for consistent pretraining and fine-tuning across different tasks.
+T5 is a transformer model unifies various NLP tasks into a single text-to-text format. The main idea behind T5 is to cast all NLP tasks as a sequence-to-sequence problem, where both input and output are text sequences. This allows for consistent pretraining and fine-tuning across different tasks.
 
 The T5 model is pretrained on a denoising autoencoder objective. During pretraining, some of the input tokens are masked, and the model learns to reconstruct the original sequence by predicting the masked tokens. Once the pretraining is completed, T5 can be fine-tuned on specific tasks by providing task-specific input and output pairs.
 
@@ -2407,6 +2652,1911 @@ As model and dataset sizes grow, memory optimization techniques become increasin
 By leveraging distributed training techniques and memory optimization methods, it is possible to train large language models more efficiently, enabling researchers and practitioners to tackle more complex NLP tasks and push the boundaries of what is possible with current hardware.
 
 
+\section{Computer Vision}
+
+Computer Vision is the study of computer's ability to gain visual understanding from images/videos captured from the real-world. Alongside NLP, it is one of the major beneficiaries of recent advancements in AI research.
+
+\subsection{Sub-Domains}
+
+Computer Vision is comprised of many different sub-domains, some of which are:
+
+\begin{enumerate}
+    \item Object classification/recognition/detection/tracking
+    \item Segmentation
+    \item Pose/Depth estimation
+    \item Image/Video Generation
+    \item 3D Reconstruction
+    \item Scene understanding
+\end{enumerate}
+
+\subsection{Data Augmentation Techniques}
+
+Data augmentation techniques are essential for enhancing the robustness and generalization of computer vision models by artificially expanding the training dataset. This section covers various data augmentation methods, their specific details, and the domains where they are commonly applied.
+
+\subsubsection{Overview of Data Augmentation}
+
+Data augmentation involves creating modified versions of the original dataset through transformations, thereby increasing the diversity of training examples and preventing overfitting.
+
+\subsubsection{Common Data Augmentation Techniques}
+
+\paragraph{Geometric Transformations}
+\begin{itemize}
+    \item \textbf{Rotation:} Rotates the image by a random angle. Commonly used in general image classification tasks to account for orientation variations.
+    \item \textbf{Translation:} Shifts the image horizontally or vertically. Useful in object detection and recognition to handle positional variations.
+    \item \textbf{Scaling:} Resizes the image by a random factor. Applied in tasks like object detection to manage size variations.
+    \item \textbf{Flipping:} Horizontally or vertically flips the image. Common in facial recognition and general classification tasks.
+    \item \textbf{Cropping:} Randomly crops a part of the image. Used in various domains to focus on different parts of the image and reduce overfitting.
+    \item \textbf{Large Scale Jittering (LSJ):} Involves randomly resizing and cropping images to a large extent, creating significant variation in object scales. Particularly effective in object detection and segmentation to improve robustness against different object sizes.
+\end{itemize}
+
+\paragraph{Color Space Augmentations}
+\begin{itemize}
+    \item \textbf{Brightness Adjustment:} Changes the brightness of the image. Useful in tasks where lighting conditions vary, such as outdoor scene analysis.
+    \item \textbf{Contrast Adjustment:} Alters the contrast of the image. Applied in general classification and medical imaging to handle contrast variations.
+    \item \textbf{Saturation Adjustment:} Modifies the saturation levels. Used in tasks involving colorful images like satellite imagery and fashion.
+    \item \textbf{Hue Adjustment:} Shifts the hue of the image. Common in tasks requiring color invariance, such as object detection in varying environments.
+\end{itemize}
+
+\paragraph{Noise Injection}
+\begin{itemize}
+    \item \textbf{Gaussian Noise:} Adds random Gaussian noise to the image. Used in general classification to improve robustness against noise.
+    \item \textbf{Salt-and-Pepper Noise:} Adds random white and black pixels to the image. Applied in tasks like document analysis to simulate paper defects.
+\end{itemize}
+
+\paragraph{Cutout}
+\begin{itemize}
+    \item \textbf{Cutout:} Randomly masks out square regions of the image. Helps in regularization and preventing the model from focusing too much on specific parts of the image.
+    \item Applied in tasks like object detection and classification to improve generalization.
+\end{itemize}
+
+\paragraph{Mixup}
+\begin{itemize}
+    \item \textbf{Mixup:} Combines two images and their labels by linear interpolation. Specifically, new training samples are created as \( \tilde{x} = \lambda x_i + (1 - \lambda) x_j \) and \( \tilde{y} = \lambda y_i + (1 - \lambda) y_j \), where \( \lambda \) is drawn from a Beta distribution.
+    \item Enhances model robustness and generalization. Commonly used in image classification tasks.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./media/vision_aug.jpeg}
+    \caption{Augmentation visualizations}
+    \label{fig:aug}
+\end{figure}
+
+\subsubsection{Advanced Data Augmentation Techniques}
+
+\paragraph{Generative Adversarial Networks (GANs)}
+\begin{itemize}
+    \item \textbf{Synthetic Data Generation:} GANs generate realistic images to augment the training dataset. Used in domains like medical imaging and autonomous driving to create diverse training samples.
+    \item \textbf{Domain Adaptation:} GANs transform images from one domain to another, e.g., from synthetic to real images. Useful in tasks like robotic vision and virtual to real-world transfer learning.
+\end{itemize}
+
+\paragraph{Adversarial Training}
+\begin{itemize}
+    \item \textbf{Adversarial Examples:} Incorporates adversarially perturbed images into the training set to improve model robustness against adversarial attacks.
+    \item Applied in security-sensitive domains like biometric authentication and autonomous driving.
+\end{itemize}
+
+\subsubsection{Domain-Specific Data Augmentation Techniques}
+
+\paragraph{Medical Imaging}
+\begin{itemize}
+    \item \textbf{Elastic Deformation:} Warps the image elastically to simulate variations in anatomical structures. Enhances robustness in tasks like tumor detection and organ segmentation.
+    \item \textbf{Patch Shuffling:} Shuffles small patches within the image to encourage the model to learn local features. Used in tasks like histopathological image analysis.
+\end{itemize}
+
+\paragraph{Natural Language Processing (NLP) to Vision Transfer}
+\begin{itemize}
+    \item \textbf{Text-to-Image Generation:} Uses models like DALL-E to create images based on textual descriptions. Helps in tasks requiring a diverse set of visual scenarios derived from textual data.
+    \item Applied in multimodal tasks combining vision and language understanding.
+\end{itemize}
+
+\subsubsection{Applications and Benefits}
+
+\begin{itemize}
+    \item \textbf{Improved Generalization:} Augmented datasets help models generalize better to unseen data by exposing them to a broader range of variations.
+    \item \textbf{Reduced Overfitting:} By increasing the effective size of the training dataset, data augmentation helps prevent the model from memorizing training examples.
+    \item \textbf{Enhanced Robustness:} Models trained with augmented data are more resilient to variations in input data, such as changes in lighting, orientation, and noise.
+    \item \textbf{Domain Adaptation:} Facilitates training models that can generalize well across different domains by providing diverse training examples.
+\end{itemize}
+
+\subsection{Object Classification/Recognition/Detection/Tracking}
+
+Object classification, recognition, detection, and tracking are fundamental tasks in computer vision. These tasks enable machines to identify, locate, and follow objects within images and videos, forming the basis for applications such as autonomous driving, surveillance, and augmented reality.
+
+For a comprehensive list in Pytorch, \href{https://pytorch.org/vision/main/auto_examples/transforms/plot_transforms_illustrations.html#sphx-glr-auto-examples-transforms-plot-transforms-illustrations-py}{Check out this PyToch guide}
+
+\subsubsection{Object Classification and Recognition}
+
+\paragraph{Motivation}
+Object classification and recognition involve identifying objects in images and assigning them to predefined categories.
+
+\paragraph{Key Models}
+
+\textbf{AlexNet (2012):}
+\begin{itemize}
+    \item \textbf{Architecture:} Consists of five convolutional layers followed by three fully connected layers. Uses ReLU activations and dropout for regularization.
+    \item \textbf{Key Innovations:} ReLU activation function accelerates training by mitigating the vanishing gradient problem. Dropout helps in reducing overfitting.
+    \item \textbf{Mathematical Formulation:} ReLU is defined as \( \text{ReLU}(x) = \max(0, x) \). Dropout involves randomly setting a fraction of the neurons to zero during training, which can be mathematically represented as \( y = \frac{1}{p} \sum_{i=1}^{N} \text{drop}(h_i) \), where \( p \) is the dropout rate.
+\end{itemize}
+
+\textbf{VGGNet (2014):}
+\begin{itemize}
+    \item \textbf{Architecture:} Utilizes very deep networks with small (3x3) convolution filters. Comprises 16-19 layers.
+    \item \textbf{Key Innovations:} The depth of the network allows for capturing more complex features.
+    \item Improved performance on image classification benchmarks.
+\end{itemize}
+
+\textbf{ResNet (2015):}
+\begin{itemize}
+    \item \textbf{Architecture:} Introduces residual blocks with skip connections to address the vanishing gradient problem.
+    \item \textbf{Key Innovations:} The residual learning framework allows training of much deeper networks (e.g., ResNet-50, ResNet-101).
+    \item \textbf{Mathematical Formulation:} Residual block is defined as \( y = F(x, \{W_i\}) + x \), where \( F \) represents the residual mapping to be learned. Residual learning means each subsequent layer in a deep neural network is only responsible for, in effect, fine tuning the output from a previous layer by just adding a learned "residual" to the input. This differs from a more traditional approach where each layer had to generate the whole desired output.
+\end{itemize}
+
+\textbf{Skip Connections:}
+Skip connections, also known as residual connections, are shortcuts that allow the input to a layer to bypass one or more intermediate layers and be added directly to the output of a later layer.
+
+\textbf{Formula:}
+For a given input \( \mathbf{x} \) to a residual block, the output \( \mathbf{y} \) is given by:
+\[
+\mathbf{y} = \mathbf{x} + \mathcal{F}(\mathbf{x}, \{W_i\})
+\]
+where \( \mathcal{F}(\mathbf{x}, \{W_i\}) \) represents the operations (e.g., convolution, batch normalization, ReLU) applied to \( \mathbf{x} \) with weights \( \{W_i\} \).
+
+\textbf{Benefits:}
+
+\begin{itemize}
+    \item \textit{Mitigating the Vanishing Gradient Problem:}
+    Skip connections help preserve the gradient during backpropagation by providing a direct path for the gradient to flow through the network. This helps mitigate the vanishing gradient problem, allowing for deeper networks to be trained effectively.
+
+    \item \textit{Improved Gradient Flow during backpropagation:}
+    By allowing gradients to bypass intermediate layers, skip connections ensure that the gradient can reach earlier layers more efficiently, leading to faster convergence and improved training dynamics.
+
+    \item \textit{Enabling Deeper Networks:}
+    Skip connections make it feasible to train very deep networks (e.g., ResNet-50, ResNet-101) by alleviating the issues of vanishing/exploding gradients. This allows for the creation of more complex models that can capture more intricate patterns in the data.
+
+    \item \textit{Better Generalization:}
+    Residual learning frameworks tend to generalize better on unseen data due to their ability to learn identity mappings. This helps in preventing overfitting and enhances the model's performance on test data.
+
+    \item \textit{Ease of Optimization:}
+    Networks with skip connections are easier to optimize, as the identity mapping ensures that layers can learn residual functions more effectively. This reduces the risk of degradation in performance as the network depth increases.
+
+\end{itemize}
+
+For a more in-depth analysis of skip-connections, \href{https://theaisummer.com/skip-connections/}{refer to this guide}. 
+
+\textbf{EfficientNet (2019):}
+\begin{itemize}
+    \item \textbf{Architecture:} Uses a compound scaling method to uniformly scale the depth, width, and resolution of networks.
+    \item \textbf{Key Innovations:} Balances model accuracy and efficiency.
+    \item \textbf{Impact:} Achieves state-of-the-art performance with fewer parameters and FLOPs compared to previous architectures.
+\end{itemize}
+
+\paragraph{Compound Scaling Method}
+
+Traditional methods for scaling up CNNs involve arbitrarily increasing one of the dimensions: depth, width, or resolution. EfficientNet uses a more systematic approach by scaling all three dimensions using a compound coefficient \( \phi \).
+
+\[
+d = \alpha^\phi, \quad w = \beta^\phi, \quad r = \gamma^\phi
+\]
+
+where:
+- \( \alpha \), \( \beta \), and \( \gamma \) are constants determined through a grid search to balance model performance and efficiency.
+- \( \phi \) is a user-specified coefficient that controls the overall scale of the network.
+
+The compound scaling method aims to maintain a balance between network depth, width, and resolution, ensuring that the network remains efficient while improving performance.
+
+EfficientNet starts with a baseline network (EfficientNet-B0) and scales it using the compound scaling method. The scaling is applied to the following aspects:
+- \textbf{Depth:} Number of layers in the network.
+- \textbf{Width:} Number of channels in each layer.
+- \textbf{Resolution:} Input image size.
+
+The scaling coefficients are derived to maximize the accuracy while minimizing the computational cost (measured in FLOPs). The final formula used to scale the baseline network is:
+
+\[
+\alpha \cdot \beta^2 \cdot \gamma^2 \approx 2
+\]
+
+For more info on compound scaling, \href{https://arjun-sarkar786.medium.com/understanding-efficientnet-the-most-powerful-cnn-architecture-eaeb40386fad}{check out this article}.
+\subsubsection{Object Detection}
+
+\paragraph{Motivation}
+Object detection involves not only identifying objects within an image but also locating them by drawing bounding boxes around each detected object. This task is crucial for applications like autonomous driving, where precise localization is necessary.
+
+\paragraph{Two-Pass Detectors}
+
+Two-pass detectors first generate region proposals and then classify each proposal into object categories.
+
+\paragraph{R-CNN (Region-based Convolutional Neural Network)}
+
+R-CNN, introduced by Girshick et al. in 2014, is one of the pioneering models in the realm of object detection. It employs a two-stage approach where region proposals are first generated and then classified.
+
+\paragraph{Architecture and Process}
+
+\begin{enumerate}
+    \item \textbf{Region Proposal:} R-CNN uses selective search to generate around 2000 region proposals from the input image.
+    
+    \item \textbf{Feature Extraction:} Each region proposal is warped into a fixed size and passed through a pre-trained convolutional neural network (e.g., AlexNet) to extract a fixed-length feature vector.
+
+    \item \textbf{Classification and Regression:} The extracted features are then fed into a set of class-specific linear SVMs to classify the regions. Additionally, a bounding box regressor is trained to refine the region proposals' coordinates.
+\end{enumerate}
+
+\paragraph{Key Insights}
+
+\begin{itemize}
+    \item \textbf{Region Proposals:} Using selective search to generate region proposals significantly reduces the number of regions to be processed, making the task computationally feasible.
+    
+    \item \textbf{Transfer Learning:} By leveraging a pre-trained CNN on a large dataset (e.g., ImageNet), R-CNN can effectively extract meaningful features from region proposals.
+
+    \item \textbf{Separate Stages:} The separation of the feature extraction, classification, and bounding box regression stages allows for modular training but also makes the process slow and cumbersome.
+\end{itemize}
+
+\paragraph{Selective Search for Region Proposals}
+
+Selective search is an algorithm used to generate region proposals for object detection, balancing high recall and computational efficiency. It operates by initially segmenting the image into small regions using a graph-based segmentation method, where each pixel is a node, and edges represent similarity measures based on color, texture, size, and shape. These initial regions are then iteratively merged based on these similarity measures to form larger candidate regions.
+
+The similarity measures include color similarity \( S_{\text{color}} \), texture similarity \( S_{\text{texture}} \), size similarity \( S_{\text{size}} \), and shape similarity \( S_{\text{shape}} \). For example, color similarity between two regions \( R_i \) and \( R_j \) is given by:
+
+\[
+S_{\text{color}}(R_i, R_j) = \sum_{c \in \{R, G, B\}} \left( \frac{\min(H_{R_i}^c, H_{R_j}^c)}{H_{R_i}^c + H_{R_j}^c} \right)
+\]
+
+Selective search generates a hierarchy of region proposals by varying the similarity thresholds and segmentation parameters, providing a diverse set of candidate regions for object detection algorithms, making it effective and efficient in generating high-quality region proposals.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./media/rcnn.png}
+    \caption{R-CNN Architecture}
+    \label{fig:fast_rcnn}
+\end{figure}
+
+\paragraph{Fast R-CNN}
+
+Fast R-CNN, introduced by Girshick in 2015, improves upon R-CNN by making the detection pipeline faster and more efficient.
+
+\paragraph{Architecture and Process}
+
+\begin{enumerate}
+    \item \textbf{Single Forward Pass:} Unlike R-CNN, Fast R-CNN processes the entire image in a single forward pass through the CNN, generating a convolutional feature map.
+
+    \item \textbf{Region of Interest (RoI) Pooling:} For each region proposal, Fast R-CNN uses RoI pooling to extract a fixed-size feature map from the convolutional feature map. This step ensures that all proposals are of the same size, suitable for subsequent processing.
+
+    \item \textbf{Classification and Regression:} The pooled features are fed into fully connected layers followed by two sibling output layers: one for softmax classification and one for bounding box regression.
+\end{enumerate}
+
+\paragraph{Key Insights}
+
+\begin{itemize}
+    \item \textbf{Shared Computation:} By sharing the convolutional computation for the entire image, Fast R-CNN significantly reduces the computational load compared to R-CNN.
+    
+    \item \textbf{RoI Pooling:} RoI pooling enables the model to handle region proposals of varying sizes, ensuring a fixed-size input for the fully connected layers.
+
+    \item \textbf{Unified Architecture:} Fast R-CNN integrates feature extraction, classification, and bounding box regression into a single network, streamlining the training and inference processes.
+\end{itemize}
+
+\textbf{RoI Pooling:}
+\begin{itemize}
+    \item \textbf{Purpose:} Extracts fixed-size feature maps for each region proposal.
+    \item \textbf{Mechanism:} Divides each proposal into a fixed number of bins and performs max pooling in each bin.
+    \item \textbf{Impact:} Significantly reduces computation and ensures a consistent input size for the fully connected layers.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./media/fast-rcnn.jpeg}
+    \caption{Fast R-CNN Architecture}
+    \label{fig:fast_rcnn}
+\end{figure}
+
+\paragraph{Faster R-CNN}
+
+Faster R-CNN, introduced by Ren et al. in 2015, further improves the speed and efficiency of the detection pipeline by introducing the Region Proposal Network (RPN).
+
+\paragraph{Architecture and Process}
+
+\begin{enumerate}
+    \item \textbf{Region Proposal Network (RPN):} Faster R-CNN introduces the RPN, a fully convolutional network that generates region proposals directly from the convolutional feature map. The RPN simultaneously predicts object bounds and objectness scores at each position.
+
+    \item \textbf{Shared Feature Map:} The RPN and Fast R-CNN share the same convolutional feature map, ensuring efficient computation.
+
+    \item \textbf{RoI Pooling and Detection:} Similar to Fast R-CNN, the region proposals generated by the RPN are processed using RoI pooling. The pooled features are then fed into fully connected layers for classification and bounding box regression.
+\end{enumerate}
+
+\textbf{Region Proposal Networks (RPN):}
+\begin{itemize}
+    \item \textbf{Purpose:} Generates candidate object proposals.
+    \item \textbf{Mechanism:} Slides a small network over the convolutional feature map and predicts objectness scores and bounding box coordinates.
+    \item \textbf{Integration:} RPNs are integrated into Faster R-CNN, making it a unified and end-to-end trainable model.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./media/rpn.png}
+    \caption{Region Proposal Networks}
+    \label{fig:rpn}
+\end{figure}
+
+\paragraph{Key Insights}
+
+\begin{itemize}
+    \item \textbf{Region Proposal Network (RPN):} The introduction of the RPN eliminates the need for an external region proposal method like selective search, making the detection process end-to-end trainable.
+
+    \item \textbf{Unified and Efficient:} By integrating the RPN with the Fast R-CNN framework, Faster R-CNN achieves state-of-the-art object detection performance with significantly improved speed and efficiency.
+
+    \item \textbf{Anchor Boxes:} The use of anchor boxes in the RPN allows for the detection of objects at multiple scales and aspect ratios, enhancing the model's flexibility and accuracy.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./media/faster-rcnn.png}
+    \caption{Faster R-CNN Architecture}
+    \label{fig:fast_rcnn}
+\end{figure}
+
+In conclusion, the evolution from R-CNN to Fast R-CNN and finally to Faster R-CNN represents significant advancements in object detection frameworks. These innovations have paved the way for more efficient and accurate object detection models, addressing key challenges such as computational efficiency and end-to-end training.
+
+\paragraph{RetinaNet}
+
+RetinaNet is an object detection framework introduced by Facebook AI Research (FAIR) in 2017. It is designed to address the class imbalance problem commonly encountered in object detection tasks, where the number of background (non-object) examples significantly outnumbers the number of foreground (object) examples.
+
+\paragraph{Architecture}
+
+The architecture of RetinaNet consists of a backbone network, a feature pyramid network (FPN), and two task-specific subnetworks: one for classification and one for bounding box regression.
+
+\begin{enumerate}
+    \item \textbf{Backbone Network:} Typically a ResNet (e.g., ResNet-50 or ResNet-101) pre-trained on ImageNet. The backbone network is used to extract features from the input image.
+    
+    \item \textbf{Feature Pyramid Network (FPN):} Built on top of the backbone network, FPN is used to generate multi-scale feature maps. It enhances the feature representation by combining low-resolution, semantically strong features with high-resolution, semantically weak features.
+    
+    \item \textbf{Classification Subnetwork:} A small fully convolutional network attached to each pyramid level for predicting the probability of object classes at each spatial position.
+    
+    \item \textbf{Regression Subnetwork:} Another small fully convolutional network attached to each pyramid level for predicting the bounding box coordinates of the objects at each spatial position.
+\end{enumerate}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./media/retinaNet.png}
+    \caption{RetinaNet Architecture}
+    \label{fig:retinanet_architecture}
+\end{figure}
+
+\paragraph{Feature Pyramid Networks (FPN)}
+
+Feature Pyramid Networks (FPNs) are a type of architecture designed to enhance the capability of convolutional neural networks (CNNs) for object detection tasks by building high-level semantic feature maps at multiple scales. This allows the network to detect objects of different sizes more effectively.
+
+\paragraph{Motivation}
+
+Standard CNN architectures typically produce a single high-level feature map, which can make it challenging to detect objects at multiple scales. FPNs address this limitation by creating a pyramid of feature maps with rich semantics at all levels, enabling better handling of small and large objects.
+
+\paragraph{Architecture}
+
+The FPN architecture involves two main components: a bottom-up pathway and a top-down pathway, connected by lateral connections.
+
+\paragraph{Bottom-Up Pathway}
+
+The bottom-up pathway is a standard feedforward CNN that extracts feature maps at multiple scales. Each level of the pathway corresponds to a different resolution of the input image.
+
+Let \( C_2, C_3, C_4, C_5 \) be the feature maps from the backbone CNN at different stages, where \( C_2 \) has the highest resolution and \( C_5 \) has the lowest resolution.
+
+\paragraph{Top-Down Pathway}
+
+The top-down pathway creates higher resolution feature maps by upsampling spatially coarser, but semantically stronger, feature maps. This pathway enhances the spatial resolution of the feature maps.
+
+Let \( P_5 \) be the top-most feature map in the pyramid, initialized as \( P_5 = C_5 \). The top-down pathway generates feature maps \( P_4, P_3, P_2 \) by upsampling and combining with the corresponding bottom-up feature maps through lateral connections.
+
+\paragraph{Lateral Connections}
+
+Lateral connections are used to merge the feature maps from the bottom-up pathway with the corresponding upsampled feature maps from the top-down pathway. This merging combines high-resolution features with strong semantics.
+
+\[
+P_i = \text{Conv}(C_i) + \text{Upsample}(P_{i+1})
+\]
+
+where \( \text{Conv}(C_i) \) is a 1x1 convolution applied to the bottom-up feature map \( C_i \) to match the number of channels, and \( \text{Upsample}(P_{i+1}) \) is the upsampled feature map from the previous level.
+
+\paragraph{Mathematical Formulation}
+
+For each level \( i \) in the feature pyramid, the feature map \( P_i \) is computed as:
+
+\[
+P_5 = \text{Conv}(C_5)
+\]
+
+\[
+P_i = \text{Conv}(C_i) + \text{Upsample}(P_{i+1}) \quad \text{for} \ i \in \{4, 3, 2\}
+\]
+
+The final feature maps \( P_2, P_3, P_4, P_5 \) form the feature pyramid, where each \( P_i \) has the same number of channels but different spatial resolutions.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.6]{./media/fpn.jpeg}
+    \caption{Feature Pyramid Networks}
+    \label{fig:fpn}
+\end{figure}
+
+\paragraph{Applications}
+
+FPNs are widely used in object detection frameworks, such as Faster R-CNN and Mask R-CNN, to improve the detection of objects at different scales. By leveraging the multi-scale feature maps, FPNs provide a more robust and accurate detection performance.
+
+For more info on FPNs, visit this \href{this guide}{https://jonathan-hui.medium.com/understanding-feature-pyramid-networks-for-object-detection-fpn-45b227b9106c}guide
+
+\paragraph{Advantages}
+
+\begin{itemize}
+    \item \textbf{Multi-Scale Feature Maps:} FPNs generate feature maps at multiple scales, each with rich semantics, improving the detection of objects of various sizes.
+    \item \textbf{Enhanced Performance:} The combination of bottom-up and top-down pathways with lateral connections results in feature maps that are both high-resolution and semantically strong.
+    \item \textbf{Efficiency:} FPNs add only a small computational overhead to the base CNN, making them an efficient way to enhance object detection capabilities.
+\end{itemize}
+
+\paragraph{Intuitions and Key Insights}
+
+\begin{itemize}
+    \item \textbf{Focal Loss:} One of the key innovations in RetinaNet is the use of focal loss for addressing class imbalance. Focal loss modifies the standard cross-entropy loss by adding a modulating factor that reduces the loss contribution from easy examples and focuses more on hard examples. The focal loss is defined as:
+
+    \[
+    \text{FL}(p_t) = -\alpha_t (1 - p_t)^\gamma \log(p_t)
+    \]
+
+    where \( p_t \) is the predicted probability of the true class, \(\alpha_t\) is a weighting factor to balance the importance of positive/negative examples, and \(\gamma\) is a focusing parameter that adjusts the rate at which easy examples are down-weighted.
+
+    \item \textbf{Feature Pyramid Network (FPN):} FPN enhances the feature maps by combining low-resolution, high-semantic feature maps with high-resolution, low-semantic feature maps. This allows RetinaNet to detect objects at different scales effectively.
+
+    \item \textbf{Anchors:} Similar to other object detection frameworks, RetinaNet uses anchor boxes of different sizes and aspect ratios at each pyramid level. These anchors serve as reference points for predicting object bounding boxes.
+
+    \item \textbf{Subnetwork Design:} The classification and regression subnetworks are small and lightweight, consisting of a few convolutional layers. This design ensures that the overall computational cost of the network is kept low, enabling real-time object detection.
+\end{itemize}
+
+\paragraph{Advantages and Performance}
+
+RetinaNet has several advantages over previous object detection frameworks:
+
+\begin{itemize}
+    \item \textbf{Addressing Class Imbalance:} The focal loss effectively handles the class imbalance problem, leading to improved detection performance, especially for small and hard-to-detect objects.
+    
+    \item \textbf{Multi-Scale Detection:} The use of FPN allows RetinaNet to detect objects at multiple scales, making it robust to variations in object size.
+    
+    \item \textbf{Real-Time Performance:} Despite its sophisticated design, RetinaNet achieves real-time performance, making it suitable for applications that require fast and accurate object detection.
+    
+    \item \textbf{State-of-the-Art Results:} RetinaNet has demonstrated state-of-the-art performance on several benchmark datasets, including COCO, achieving a good balance between speed and accuracy.
+\end{itemize}
+
+In conclusion, RetinaNet is a powerful object detection framework that leverages focal loss and feature pyramid networks to achieve high accuracy and robustness, particularly in scenarios with significant class imbalance.
+
+\paragraph{One-Pass Detectors}
+
+One-pass detectors directly predict bounding boxes and class probabilities from full images in a single evaluation.
+
+\paragraph{YOLO, YOLOv2, and YOLOv3}
+
+\paragraph{YOLO (You Only Look Once)}
+
+YOLO, introduced by Redmon et al. in 2016, is a real-time object detection system that reframes object detection as a single regression problem, directly predicting bounding boxes and class probabilities from full images in one evaluation.
+
+\paragraph{Architecture and Process}
+
+\begin{enumerate}
+    \item \textbf{Unified Detection:} YOLO divides the input image into an \( S \times S \) grid, and each grid cell predicts \( B \) bounding boxes and their confidence scores. Each bounding box consists of five predictions: \( x \), \( y \), \( w \), \( h \), and confidence.
+    
+    \item \textbf{Class Prediction:} Each grid cell also predicts \( C \) conditional class probabilities, representing the probability that an object belongs to each class given that an object is present in the cell.
+    
+    \item \textbf{Single Neural Network:} YOLO uses a single convolutional neural network (CNN) to predict bounding boxes and class probabilities directly from the full images.
+\end{enumerate}
+
+\paragraph{Key Insights}
+
+\begin{itemize}
+    \item \textbf{Speed:} By framing detection as a single regression problem, YOLO achieves high-speed real-time detection.
+    
+    \item \textbf{Global Context:} YOLO reasons globally about the image and the bounding boxes, providing better contextual understanding compared to sliding window and region proposal-based methods.
+    
+    \item \textbf{Simplicity:} YOLO simplifies the detection pipeline by eliminating the need for complex stages like region proposal generation and pooling.
+\end{itemize}
+
+\paragraph{Limitations}
+
+\begin{itemize}
+    \item \textbf{Localization Error:} YOLO has relatively high localization error due to its coarse grid structure.
+    
+    \item \textbf{Small Object Detection:} It struggles to detect small objects accurately because each grid cell can only predict two bounding boxes.
+    
+    \item \textbf{Generalization to New Domains:} YOLO's performance drops significantly on new domains not seen during training.
+\end{itemize}
+
+\paragraph{YOLOv2 (You Only Look Once Version 2)}
+
+YOLOv2, introduced by Redmon and Farhadi in 2017, improves upon YOLO with several key modifications aimed at enhancing detection accuracy and speed.
+
+\paragraph{Improvements over YOLO}
+
+\begin{itemize}
+    \item \textbf{Batch Normalization:} YOLOv2 incorporates batch normalization on all convolutional layers, improving convergence and regularization.
+
+    \item \textbf{High-Resolution Classifier:} YOLOv2 is pre-trained on high-resolution images, resulting in finer-grained feature extraction.
+
+    \item \textbf{Anchor Boxes:} YOLOv2 adopts anchor boxes to predict bounding boxes, similar to Faster R-CNN, enhancing the model's ability to detect objects at various scales and aspect ratios.
+
+    \item \textbf{Dimension Clusters:} K-means clustering is used to determine good priors for bounding box dimensions, optimizing the anchor boxes for better predictions.
+
+    \item \textbf{Multi-Scale Training:} YOLOv2 employs multi-scale training by varying the input image size during training, making the model robust to different input resolutions.
+\end{itemize}
+
+\paragraph{Key Insights}
+
+\begin{itemize}
+    \item \textbf{Improved Accuracy:} The incorporation of batch normalization, anchor boxes, and dimension clusters significantly improves detection accuracy.
+
+    \item \textbf{Flexibility:} Multi-scale training enhances the model's flexibility to detect objects in images of varying resolutions.
+
+    \item \textbf{Speed and Efficiency:} YOLOv2 maintains high-speed real-time detection while improving accuracy.
+\end{itemize}
+
+\paragraph{Limitations}
+
+\begin{itemize}
+    \item \textbf{Complex Anchors:} While anchor boxes improve accuracy, they add complexity to the model and require careful tuning.
+    
+    \item \textbf{Localization Errors:} YOLOv2 still has issues with localization accuracy, especially for small objects.
+    
+    \item \textbf{Resource Intensive:} Multi-scale training increases the computational resources required during training.
+\end{itemize}
+
+\paragraph{YOLOv3 (You Only Look Once Version 3)}
+
+YOLOv3, introduced by Redmon and Farhadi in 2018, further enhances the YOLO architecture with several key improvements aimed at improving accuracy and maintaining real-time performance.
+
+\paragraph{Improvements over YOLOv2}
+
+\begin{itemize}
+    \item \textbf{Feature Pyramid Network (FPN):} YOLOv3 incorporates an FPN-like structure, predicting bounding boxes at three different scales, enabling the detection of objects of varying sizes more effectively.
+
+    \item \textbf{Residual Blocks:} YOLOv3 uses a deeper network with residual blocks (Darknet-53) to improve feature extraction and maintain high-speed inference.
+
+    \item \textbf{Multi-label Classification:} YOLOv3 formulates object detection as a multi-label classification problem, using binary cross-entropy loss for class predictions, allowing the detection of objects belonging to multiple classes simultaneously.
+
+    \item \textbf{Bounding Box Prediction:} YOLOv3 predicts bounding boxes using logistic regression, and the class prediction and bounding box prediction are decoupled, simplifying the detection process.
+\end{itemize}
+
+\paragraph{Key Insights}
+
+\begin{itemize}
+    \item \textbf{Enhanced Accuracy:} The use of FPN, residual blocks, and multi-scale predictions significantly enhances the accuracy of YOLOv3.
+
+    \item \textbf{Robustness:} YOLOv3's deeper network and multi-scale detection make it more robust to various object sizes and complex scenes.
+
+    \item \textbf{Real-time Performance:} Despite the increased complexity, YOLOv3 maintains real-time detection performance, making it suitable for practical applications.
+\end{itemize}
+
+\paragraph{Limitations}
+
+\begin{itemize}
+    \item \textbf{Increased Complexity:} YOLOv3's deeper network and multi-scale predictions increase the model's complexity and computational requirements.
+    
+    \item \textbf{Training Time:} The training time for YOLOv3 is longer due to its increased depth and multi-scale approach.
+    
+    \item \textbf{Resource Intensive:} YOLOv3 requires significant computational resources, especially for training.
+\end{itemize}
+
+In summary, the evolution from YOLO to YOLOv2 and YOLOv3 demonstrates significant advancements in object detection, with each iteration improving upon the previous one in terms of accuracy, robustness, and efficiency. These models have set new standards for real-time object detection in computer vision.
+
+\textbf{SSD (Single Shot MultiBox Detector) (2016):}
+\begin{itemize}
+    \item \textbf{Multi-Scale Feature Maps:} Uses multiple feature maps at different scales for detecting objects of various sizes.
+    \item \textbf{Single Pass Detection:} Performs detection in a single forward pass of the network.
+    \item \textbf{Advantage:} Balances speed and accuracy, suitable for real-time applications.
+\end{itemize}
+
+\paragraph{Loss Functions and Metrics}
+\begin{itemize}
+    \item \textbf{Multi-task Loss:} Combines classification loss (e.g., cross-entropy) and localization loss (e.g., smooth L1 loss) for bounding box regression.
+    \item \textbf{Intersection over Union (IoU):} Measures the overlap between predicted and ground truth bounding boxes.
+    \item \textbf{Mean Average Precision (mAP):} Combines precision and recall across different IoU thresholds to evaluate the overall performance of the detection model.
+\end{itemize}
+
+\subsection{Mean Average Precision (mAP)}
+
+Mean Average Precision (mAP) is a widely used metric to evaluate the performance of object detection models. It summarizes the precision-recall curve by computing the average precision (AP) for each class and then taking the mean of these values.
+
+\paragraph{Definitions}
+
+\begin{itemize}
+  \item \textbf{Precision}: The ratio of correctly predicted positive observations to the total predicted positives.
+  \[
+  \text{Precision} = \frac{TP}{TP + FP}
+  \]
+  where $TP$ is the number of true positives, and $FP$ is the number of false positives.
+
+  \item \textbf{Recall}: The ratio of correctly predicted positive observations to all the observations in the actual class.
+  \[
+  \text{Recall} = \frac{TP}{TP + FN}
+  \]
+  where $FN$ is the number of false negatives.
+
+  \item \textbf{Precision-Recall Curve}: A plot of precision against recall for different threshold values.
+
+  \item \textbf{Average Precision (AP)}: The area under the precision-recall curve. This is usually computed by averaging the precision values at different recall levels.
+\end{itemize}
+
+\paragraph{Steps to Compute mAP}
+
+\begin{enumerate}
+  \item \textbf{Compute Precision and Recall for Each Class}: For each class, compute the precision and recall at various threshold levels.
+  \item \textbf{Plot the Precision-Recall Curve}: Plot the precision against recall for these threshold levels.
+  \item \textbf{Calculate Average Precision (AP)}: Compute the area under the precision-recall curve. This can be done using the trapezoidal rule or by averaging the precision values at fixed recall levels.
+  \item \textbf{Compute Mean Average Precision (mAP)}: Take the mean of the AP values for all classes.
+\end{enumerate}
+
+\paragraph{Example}
+
+Let's say we have a simple object detection task with two classes: \textit{Car} and \textit{Bike}.
+
+\paragraph{Step-by-Step Calculation}
+
+\begin{enumerate}
+  \item \textbf{Compute Precision and Recall for Each Class}
+
+  For class \textit{Car}, we have:
+  \[
+  \text{Recall} = [0, 0.1, 0.4, 0.6, 0.8, 1.0]
+  \]
+  \[
+  \text{Precision} = [1.0, 0.9, 0.8, 0.75, 0.6, 0.5]
+  \]
+
+  For class \textit{Bike}, we have:
+  \[
+  \text{Recall} = [0, 0.2, 0.5, 0.7, 1.0]
+  \]
+  \[
+  \text{Precision} = [1.0, 0.85, 0.8, 0.7, 0.65]
+  \]
+
+  \item \textbf{Plot the Precision-Recall Curves}
+\end{enumerate}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      xlabel={Recall},
+      ylabel={Precision},
+      title={Precision-Recall Curve for Car and Bike},
+      legend pos=south west,
+      grid=major,
+      width=0.8\textwidth,
+      height=0.5\textwidth,
+      ymax=1.2,
+      xmin=0, xmax=1, ymin=0, ymax=1
+      ]
+      \addplot[color=blue, mark=o] coordinates {
+        (0, 1.0) (0.1, 0.9) (0.4, 0.8) (0.6, 0.75) (0.8, 0.6) (1.0, 0.5)
+      };
+      \addlegendentry{Car}
+      \addplot[color=red, mark=x] coordinates {
+        (0, 1.0) (0.2, 0.85) (0.5, 0.8) (0.7, 0.7) (1.0, 0.65)
+      };
+      \addlegendentry{Bike}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Precision-Recall Curves for Car and Bike}
+  \label{fig:pr_curve}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{Calculate Average Precision (AP)}
+
+  For class \textit{Car}, we calculate the AP as:
+  \[
+  \text{AP}_{\text{Car}} = \frac{1}{6} \left(1.0 + 0.9 + 0.8 + 0.75 + 0.6 + 0.5\right) = 0.758
+  \]
+
+  For class \textit{Bike}, we calculate the AP as:
+  \[
+  \text{AP}_{\text{Bike}} = \frac{1}{5} \left(1.0 + 0.85 + 0.8 + 0.7 + 0.65\right) = 0.8
+  \]
+
+  \item \textbf{Compute Mean Average Precision (mAP)}
+
+  Finally, we calculate the mAP as:
+  \[
+  \text{mAP} = \frac{1}{2} \left(0.758 + 0.8\right) = 0.779
+  \]
+\end{enumerate}
+
+\paragraph{Using IoU in Object Detection}
+
+In the context of object detection, Intersection over Union (IoU) is used to determine whether a predicted bounding box is a true positive or a false positive. The IoU is computed as follows:
+
+\[
+\text{IoU} = \frac{\text{Area of Overlap}}{\text{Area of Union}}
+\]
+
+A predicted bounding box is considered a true positive if its IoU with the ground truth bounding box exceeds a certain threshold (e.g., 0.5).
+
+Example of mAP Calculation with IoU
+
+Let's consider a set of predicted bounding boxes and their IoU with ground truth boxes for the class \textit{Car}:
+
+\begin{itemize}
+  \item Predicted Box 1: IoU = 0.7 (True Positive)
+  \item Predicted Box 2: IoU = 0.4 (False Positive)
+  \item Predicted Box 3: IoU = 0.6 (True Positive)
+  \item Predicted Box 4: IoU = 0.3 (False Positive)
+  \item Predicted Box 5: IoU = 0.8 (True Positive)
+\end{itemize}
+
+Using a threshold of 0.5 for IoU, we compute precision and recall at different confidence thresholds, plot the precision-recall curve, and calculate the AP as before.
+
+\subsection{Object Tracking}
+
+\paragraph{Motivation}
+Object tracking involves following objects across frames in a video sequence. It is vital for applications like surveillance, autonomous driving, and human-computer interaction, where continuous monitoring of object movements is required.
+
+\paragraph{Key Models}
+
+\textbf{SORT (2016):}
+\begin{itemize}
+    \item \textbf{Mechanism:} Uses a combination of Kalman filtering and the Hungarian algorithm for data association.
+    \item \textbf{Advantage:} High speed and simplicity, making it suitable for real-time applications.
+\end{itemize}
+
+\textbf{DeepSORT (2017):}
+\begin{itemize}
+    \item \textbf{Extension:} Enhances SORT by integrating a deep appearance descriptor.
+    \item \textbf{Advantage:} Improved robustness against occlusions and re-identification.
+\end{itemize}
+
+\textbf{Siamese Networks (2016):}
+\begin{itemize}
+    \item \textbf{Mechanism:} Leverages a similarity learning approach to track objects.
+    \item \textbf{Implementation:} Fully-Convolutional Siamese Networks learn a general similarity function offline, used to track objects in real-time.
+\end{itemize}
+
+\paragraph{QD-Track}
+
+\paragraph{Architecture}
+QD-Track (Query-Driven Tracking) is a multi-object tracking framework that leverages a query-based mechanism integrated with a transformer architecture. The core of QD-Track consists of a transformer encoder-decoder structure. The encoder processes the input video frames to extract feature representations, while the decoder utilizes a set of learnable queries to attend to these features and predict the locations and identities of the objects being tracked. Each query corresponds to a tracked object and is dynamically updated to maintain accurate associations across frames.
+
+\paragraph{Key Insights}
+The primary innovation of QD-Track is its use of a query mechanism for object tracking. This approach allows the model to dynamically manage and update object representations, which significantly enhances its ability to handle occlusions, appearance variations, and complex motion patterns. By leveraging the self-attention mechanism of transformers, QD-Track can capture long-range dependencies and contextual information, making it robust in challenging tracking scenarios.
+
+\paragraph{Improvements Over Previous Works}
+QD-Track introduces several improvements over traditional tracking methods:
+
+\begin{itemize}
+    \item \textbf{Query-Based Mechanism:} Traditional tracking methods often rely on manual association and heuristic rules for maintaining object identities. In contrast, QD-Track uses learnable queries that are updated iteratively, providing a more flexible and adaptive approach to track management.
+    
+    \item \textbf{Transformer Architecture:} The use of a transformer-based encoder-decoder structure allows QD-Track to effectively handle sequential data and capture complex relationships between objects over time. This results in improved tracking accuracy and robustness compared to methods that do not utilize such architectures.
+    
+    \item \textbf{Handling Occlusions and Appearance Variations:} The query-driven mechanism allows QD-Track to maintain consistent object identities even under occlusions or significant changes in appearance. This is a significant improvement over previous methods, which often struggle in such scenarios.
+    
+    \item \textbf{Efficiency:} QD-Track's architecture is designed to be computationally efficient, enabling real-time performance. This makes it suitable for practical applications such as autonomous driving, surveillance, and sports analytics, where real-time multi-object tracking is crucial.
+\end{itemize}
+
+\paragraph{Conclusion}
+In summary, QD-Track represents a significant advancement in multi-object tracking by introducing a query-driven, transformer-based framework. Its ability to dynamically manage object representations, handle challenging tracking scenarios, and operate efficiently in real-time applications marks it as a notable improvement over traditional tracking methods.
+
+\paragraph{Loss Functions and Metrics}
+\begin{itemize}
+    \item \textbf{Multi-Object Tracking Accuracy (MOTA):} Evaluates tracking performance by considering false positives, false negatives, and identity switches.
+    \item \textbf{IDF1:} Measures the ratio of correctly identified detections to the average number of ground truth and computed detections.
+\end{itemize}
+
+\subsection{Segmentation}
+
+Segmentation in computer vision refers to the process of partitioning an image into multiple segments, typically to locate objects and boundaries. There are various types of segmentation, including semantic segmentation, instance segmentation, and panoptic segmentation.
+
+\subsubsection{Semantic Segmentation}
+
+Semantic segmentation involves labeling each pixel in an image with a class from a predefined set. This task does not differentiate between different instances of the same class.
+
+\paragraph{Key Models and Innovations}
+
+\textbf{Fully Convolutional Networks (FCNs) (2015):}
+\begin{itemize}
+    \item \textbf{Architecture:} FCNs replace the fully connected layers in traditional CNNs with convolutional layers, allowing the network to output spatial maps.
+    \item \textbf{Upsampling:} Uses deconvolutional (transposed convolution) layers to upsample feature maps back to the input image resolution.
+    \item \textbf{Impact:} Set the groundwork for subsequent segmentation models by demonstrating end-to-end trainable networks for pixel-wise prediction.
+\end{itemize}
+
+\textbf{U-Net (2015):}
+\begin{itemize}
+    \item \textbf{Architecture:} U-Net features an encoder-decoder structure with skip connections between corresponding layers in the encoder and decoder.
+    \item \textbf{Advantages:} The skip connections allow the model to capture both contextual and high-resolution information, making it particularly effective for biomedical image segmentation.
+\end{itemize}
+
+\textbf{DeepLab (2017):}
+\begin{itemize}
+    \item \textbf{Atrous Convolution:} DeepLab uses atrous (dilated) convolutions to capture multi-scale context without reducing spatial resolution.
+    \item \textbf{Conditional Random Fields (CRFs):} Employs CRFs as a post-processing step to refine segmentation boundaries.
+    \item \textbf{Variants:} DeepLabv2, DeepLabv3, and DeepLabv3+ introduced various improvements, including better multi-scale context aggregation and more efficient architectures.
+\end{itemize}
+
+\paragraph{Loss Functions and Metrics}
+
+\textbf{Cross-Entropy Loss:}
+\begin{itemize}
+    \item Commonly used for semantic segmentation, applied to each pixel independently.
+\end{itemize}
+
+\textbf{Dice Loss:}
+\begin{itemize}
+    \item Measures the overlap between the predicted and ground truth segmentation masks, particularly useful for imbalanced datasets.
+\end{itemize}
+
+\textbf{Intersection over Union (IoU):}
+\begin{itemize}
+    \item Evaluates the overlap between predicted and ground truth regions, providing a standard metric for segmentation performance.
+\end{itemize}
+
+\subsubsection{Instance Segmentation}
+
+Instance segmentation not only labels each pixel with a class but also differentiates between different instances of the same class.
+
+\paragraph{Key Models and Innovations}
+
+\textbf{Mask R-CNN (2017):}
+\begin{itemize}
+    \item \textbf{Extension of Faster R-CNN:} Mask R-CNN extends Faster R-CNN by adding a branch for predicting segmentation masks.
+    \item \textbf{RoI Align:} Introduces RoI Align to improve mask accuracy by properly aligning the extracted features with the input.
+    \item \textbf{Multi-task Loss:} Combines classification, bounding box regression, and mask prediction into a single framework.
+\end{itemize}
+
+\paragraph{RoI Pooling}
+
+RoI Pooling is a process that converts the variable-sized regions of interest into a fixed-size feature map, which is necessary for downstream tasks such as classification and bounding box regression. It achieves this by dividing each RoI into a fixed number of bins and performing max pooling within each bin.
+
+\paragraph{Mathematical Formulation}
+
+Given an RoI, the RoI Pooling layer divides it into a grid of \( H \times W \) bins. For each bin, it selects the maximum value from the corresponding region of the input feature map. The result is a fixed-size feature map of \( H \times W \) for each RoI.
+
+Let \((x_1, y_1)\) and \((x_2, y_2)\) be the coordinates of the top-left and bottom-right corners of an RoI, respectively. The width and height of the RoI are given by:
+
+\[
+w = x_2 - x_1 + 1, \quad h = y_2 - y_1 + 1
+\]
+
+Each bin size in the pooling layer is:
+
+\[
+w_{\text{bin}} = \frac{w}{W}, \quad h_{\text{bin}} = \frac{h}{H}
+\]
+
+For each bin, max pooling is applied:
+
+\[
+\text{pooled}(i, j) = \max_{(x, y) \in \text{bin}(i, j)} \text{feature}(x, y)
+\]
+
+where \( \text{bin}(i, j) \) represents the region in the input feature map corresponding to bin \( (i, j) \).
+
+\paragraph{Limitations of RoI Pooling}
+
+RoI Pooling introduces quantization errors due to the rounding of the coordinates of the bins, which can lead to misalignment between the RoIs and the extracted features. This can degrade the performance, especially in tasks requiring precise localization.
+
+\paragraph{RoI Align}
+
+RoI Align addresses the limitations of RoI Pooling by removing the quantization of the bin boundaries and using bilinear interpolation to compute the exact values of the input features at four regularly sampled locations in each bin. The final
+
+ output is obtained by applying max or average pooling on these sampled values.
+
+\paragraph{Mathematical Formulation}
+
+RoI Align does not quantize the coordinates of RoI bins. Instead, it computes the coordinates of the sampling points and uses bilinear interpolation to get the feature values.
+
+For an RoI, the size of each bin is computed as before, but the bin boundaries are not rounded. Each bin in RoI Align is subdivided into \( n \times n \) (e.g., \( 2 \times 2 \)) sub-bins, and the feature values at these sub-bin centers are computed using bilinear interpolation.
+
+Let \( P \) be the feature map, and \((x, y)\) be a floating-point coordinate. The bilinear interpolation value \( P(x, y) \) is computed as:
+
+\[
+P(x, y) = \sum_{i=0}^{1} \sum_{j=0}^{1} w_{ij} P(\lfloor x \rfloor + i, \lfloor y \rfloor + j)
+\]
+
+where \( w_{ij} \) are the interpolation weights based on the distance from \((x, y)\) to its neighboring integer coordinates.
+
+\paragraph{Importance of RoI Align}
+
+RoI Align provides more accurate feature extraction by preserving the spatial alignment between the RoIs and the feature map. This leads to improved performance in object detection tasks, particularly in terms of localization accuracy.
+
+\subparagraph{Comparison with RoI Pooling}
+
+\begin{itemize}
+    \item \textbf{Precision:} RoI Align provides higher precision by avoiding quantization errors, which are inherent in RoI Pooling.
+    \item \textbf{Interpolation:} RoI Align uses bilinear interpolation to compute the feature values, while RoI Pooling uses max pooling, which can be less precise.
+    \item \textbf{Performance:} Improved performance in tasks requiring precise localization, such as instance segmentation.
+\end{itemize}
+
+\textbf{PANet (2018):}
+\begin{itemize}
+    \item \textbf{Path Aggregation Network:} Enhances Mask R-CNN by improving information flow in the network, leading to better feature representation.
+    \item \textbf{Advantages:} Demonstrates significant improvements in instance segmentation performance by leveraging precise localization and strong feature pyramids.
+\end{itemize}
+
+\paragraph{Mask2Former}
+
+Mask2Former, introduced by Meta AI in 2022, is a versatile architecture capable of addressing various segmentation tasks, including panoptic, instance, and semantic segmentation. It builds upon the Meta architecture for mask classification and introduces several key innovations to improve performance and efficiency.
+
+\paragraph{Architecture Overview}
+
+Mask2Former employs a novel Transformer-based decoder that utilizes masked attention mechanisms instead of the standard cross-attention. This approach allows for better handling of high-resolution images and improves the convergence speed and performance of the model.
+
+\begin{itemize}
+    \item \textbf{Transformer Decoder with Masked Attention:} The core innovation in Mask2Former is the use of masked attention within the Transformer decoder. Masked attention ensures that each query attends to a specific region of the input, which helps in learning more accurate and localized features for segmentation.
+    \item \textbf{Mask Classification:} Similar to the original Mask R-CNN, Mask2Former predicts a binary mask for each detected object. The mask classification head outputs a set of binary masks that are refined iteratively through the Transformer decoder.
+    \item \textbf{Training Improvements:} Mask2Former introduces several training enhancements, such as better data augmentation techniques and loss functions, to improve the model's efficiency and accuracy.
+\end{itemize}
+
+\paragraph{Key Innovations and Contributions}
+
+\begin{itemize}
+    \item \textbf{Unified Segmentation Framework:} Mask2Former can handle panoptic, instance, and semantic segmentation tasks within a single framework. This unification simplifies the deployment of segmentation models in real-world applications.
+    \item \textbf{Improved Convergence:} The masked attention mechanism in the Transformer decoder leads to faster convergence and better performance compared to traditional cross-attention mechanisms.
+    \item \textbf{Efficient Handling of High-Resolution Images:} The architecture is designed to efficiently process high-resolution images, making it suitable for tasks requiring detailed and accurate segmentation, such as medical imaging and autonomous driving.
+\end{itemize}
+
+\paragraph{Performance and Applications}
+
+Mask2Former has demonstrated state-of-the-art performance on various segmentation benchmarks, including COCO and ADE20K. Its ability to handle multiple segmentation tasks within a single model makes it a powerful tool for a wide range of applications, from autonomous driving to medical image analysis.
+
+Mask2Former represents a significant advancement in the field of segmentation, offering a unified and efficient solution for panoptic, instance, and semantic segmentation tasks. Its innovative use of masked attention within the Transformer decoder sets a new standard for performance and versatility in segmentation models.
+
+\paragraph{Detic}
+
+\paragraph{Introduction and Context}
+Detic, short for Detection Transformer, is an advanced object detection framework that builds upon the concept of transformers, initially designed for natural language processing (NLP), to improve object detection tasks in computer vision. The model leverages the self-attention mechanism of transformers to capture global dependencies and contextual information, which are crucial for accurately detecting and localizing objects in images.
+
+\paragraph{Architecture}
+Detic's architecture consists of several key components:
+\begin{enumerate}
+    \item \textbf{Backbone Network:} Typically a convolutional neural network (CNN) such as ResNet or a Vision Transformer (ViT) that extracts feature maps from the input images.
+    \item \textbf{Transformer Encoder:} Processes the extracted feature maps to capture global dependencies and context. The encoder consists of multiple layers of self-attention and feed-forward networks.
+    \item \textbf{Transformer Decoder:} Generates detection predictions by attending to the encoder's output and a set of learned object queries. Each query corresponds to a potential object in the image.
+    \item \textbf{Prediction Heads:} Consist of fully connected layers that output the bounding boxes, class labels, and objectness scores for the detected objects.
+\end{enumerate}
+
+\paragraph{Key Innovations and Insights}
+\begin{enumerate}
+    \item \textbf{Self-Attention Mechanism:} By leveraging self-attention, Detic captures long-range dependencies and contextual information more effectively than traditional convolutional approaches. This leads to better detection performance, especially in complex scenes with multiple objects.
+    \item \textbf{End-to-End Training:} Detic eliminates the need for heuristic components such as anchor generation and non-maximum suppression (NMS) by treating object detection as a direct set prediction problem. This simplifies the training process and allows for end-to-end optimization.
+    \item \textbf{Object Queries:} The use of learned object queries enables the model to handle varying numbers of objects in images dynamically. Each query learns to attend to different parts of the image, effectively localizing and classifying objects.
+\end{enumerate}
+
+\paragraph{Technical Details}
+\begin{enumerate}
+    \item \textbf{Loss Function:} Detic uses a combination of classification and regression loss functions to train the model. The classification loss is typically a cross-entropy loss, while the regression loss for bounding box coordinates can be a smooth L1 loss or a generalized IoU loss.
+    \item \textbf{Positional Encoding:} To incorporate spatial information, Detic adds positional encodings to the input features. This helps the model understand the relative positions of objects within the image.
+    \item \textbf{Data Augmentation:} Detic employs various data augmentation techniques such as random cropping, resizing, flipping, and color jittering to improve the robustness and generalization of the model.
+\end{enumerate}
+
+\paragraph{Performance and Applications}
+Detic has demonstrated state-of-the-art performance on various object detection benchmarks such as COCO and Pascal VOC. Its ability to capture global context and dependencies makes it particularly effective for detecting objects in challenging scenarios, including cluttered backgrounds and occlusions. Detic's applications span across autonomous driving, surveillance, medical imaging, and robotics, where accurate and reliable object detection is critical.
+
+\paragraph{Limitations and Challenges}
+\begin{enumerate}
+    \item \textbf{Computational Complexity:} The self-attention mechanism in transformers has a quadratic complexity with respect to the input size, which can be computationally expensive for high-resolution images.
+    \item \textbf{Data Requirements:} Detic, like other deep learning models, requires large amounts of annotated data for training. This can be a bottleneck in scenarios where labeled data is scarce.
+    \item \textbf{Fine-Tuning:} While Detic performs well on standard benchmarks, fine-tuning it for specific applications or datasets may require careful hyperparameter tuning and domain adaptation techniques.
+\end{enumerate}
+
+Detic represents a significant advancement in the field of object detection by incorporating transformer-based architectures. Its ability to capture global context and dependencies has led to improved detection accuracy and robustness. As research in transformers for vision tasks continues to evolve, we can expect further enhancements in object detection models, making them more efficient and effective for real-world applications.
+
+
+\subsubsection{Panoptic Segmentation}
+
+Panoptic segmentation combines both semantic and instance segmentation, providing a complete scene understanding by labeling every pixel with either a semantic or instance label.
+
+\paragraph{Key Models and Innovations}
+
+\textbf{Panoptic FPN (2018):}
+\begin{itemize}
+    \item \textbf{Architecture:} Panoptic Feature Pyramid Networks (FPN) extend Feature Pyramid Networks to perform both semantic and instance segmentation.
+    \item \textbf{Unified Model:} Uses separate heads for semantic and instance segmentation, combining the outputs to produce the final panoptic segmentation map.
+\end{itemize}
+
+\textbf{UPSNet (2019):}
+\begin{itemize}
+    \item \textbf{Unified Panoptic Segmentation Network:} UPSNet integrates a new panoptic head with a novel panoptic feature alignment module.
+    \item \textbf{Advantages:} Achieves state-of-the-art performance with improved computational efficiency and segmentation accuracy.
+\end{itemize}
+
+\paragraph{Loss Functions and Metrics}
+
+\textbf{Panoptic Quality (PQ):}
+\begin{itemize}
+    \item A comprehensive metric that evaluates both the segmentation quality (intersection over union) and recognition quality (detection score).
+    \item Defined as \(PQ = \frac{\sum_{(p,g) \in TP} IoU(p, g)}{|TP| + \frac{1}{2}|FP| + \frac{1}{2}|FN|}\), where \(TP\), \(FP\), and \(FN\) are true positives, false positives, and false negatives, respectively.
+\end{itemize}
+
+\subsubsection{Loss Functions and Metrics for Segmentation}
+
+\paragraph{Cross-Entropy Loss}
+\begin{itemize}
+    \item \textbf{Definition:} Computes the cross-entropy loss for each pixel, treating each pixel independently.
+    \item \textbf{Formula:} Given a ground truth label \(y\) and a predicted probability \(p\), the loss for a single pixel is \(L_{CE} = -\sum y \log(p)\).
+\end{itemize}
+
+\paragraph{Dice Loss}
+\begin{itemize}
+    \item \textbf{Definition:} Measures the overlap between the predicted segmentation and the ground truth.
+    \item \textbf{Formula:} \(L_{Dice} = 1 - \frac{2 |A \cap B|}{|A| + |B|}\), where \(A\) is the predicted set of pixels and \(B\) is the ground truth set.
+    \item \textbf{Advantage:} Particularly effective for handling imbalanced datasets.
+\end{itemize}
+
+\paragraph{Intersection over Union (IoU)}
+\begin{itemize}
+    \item \textbf{Definition:} Evaluates the overlap between predicted and ground truth regions.
+    \item \textbf{Formula:} \(IoU = \frac{|A \cap B|}{|A \cup B|}\), where \(A\) is the predicted set of pixels and \(B\) is the ground truth set.
+    \item \textbf{Use:} Standard metric for segmentation performance, used in competitions like the COCO challenge.
+\end{itemize}
+
+IoU itself is not usually used as a loss function, however, \href{https://learnopencv.com/iou-loss-functions-object-detection/#ciou-complete-iou-loss}{GIoU, DIoU, and CIoU have been proposed as alternatives with a more smooth landscape.}
+
+\subsection{Pose/Depth Estimation}
+
+Pose and depth estimation are critical tasks in computer vision
+
+ that involve understanding the spatial configuration of objects and their distances from the camera. These tasks have a wide range of applications, including robotics, augmented reality, and autonomous driving.
+
+\subsubsection{Pose Estimation}
+
+Pose estimation refers to the process of determining the position and orientation of an object or person within a given space. In human pose estimation, the goal is to localize key points on the human body, such as joints, to understand the pose of the person in the image or video.
+
+\subparagraph{Key Concepts and Methods}
+
+\textbf{Single-Person Pose Estimation:} This approach focuses on estimating the pose of a single individual in an image. Traditional methods often use part-based models, such as the Pictorial Structures Model, which represent the human body as a collection of connected parts. Modern approaches leverage deep learning techniques, particularly convolutional neural networks (CNNs), to directly predict the locations of key points.
+
+\textbf{DeepPose (2014):} One of the first deep learning-based methods for human pose estimation, DeepPose uses a CNN to regress the positions of body joints from the input image. The objective is to minimize the Euclidean distance between the predicted and ground truth joint coordinates.
+
+Let \( \hat{y}_i \) be the predicted coordinate of the \( i \)-th joint and \( y_i \) be the ground truth coordinate. The loss function used in DeepPose is:
+
+\[
+L = \sum_{i=1}^N \| \hat{y}_i - y_i \|^2
+\]
+
+where \( N \) is the number of joints.
+
+\textbf{OpenPose (2016):} OpenPose introduces a bottom-up approach to multi-person pose estimation, where body parts are detected first and then assembled into full poses. This method uses Part Affinity Fields (PAFs) to associate body parts with individuals. The loss function consists of two terms: one for keypoint heatmaps and another for PAFs.
+
+\[
+L = \sum_{p=1}^P \sum_{i=1}^{N_p} \left( \| H_i^p - \hat{H}_i^p \|^2 + \| P_i^p - \hat{P}_i^p \|^2 \right)
+\]
+
+where \( P \) is the number of stages, \( N_p \) is the number of points in stage \( p \), \( H \) is the heatmap, and \( P \) is the PAF.
+
+\textbf{PoseNet (2015):} PoseNet is designed for camera pose estimation, particularly for augmented reality applications. It uses a CNN to predict the 6-DoF (degrees of freedom) camera pose from a single RGB image. The loss function combines positional and rotational errors.
+
+\[
+L = \| \hat{t} - t \|^2 + \beta \| \hat{q} - q \|^2
+\]
+
+where \( \hat{t} \) and \( t \) are the predicted and ground truth translations, \( \hat{q} \) and \( q \) are the predicted and ground truth quaternions, and \( \beta \) is a scale factor to balance the two terms.
+
+\textbf{HRNet (2019):} The High-Resolution Network (HRNet) maintains high-resolution representations throughout the network and combines them with multi-scale features. This architecture has set new benchmarks in human pose estimation by capturing detailed spatial information and preserving fine-grained features.
+
+\paragraph{Challenges and Techniques}
+
+Pose estimation faces several challenges, including occlusions, varying body shapes, and complex backgrounds. To address these challenges, researchers have developed various techniques:
+
+\textbf{Multi-Scale Features:} Using features at different scales helps capture both global context and fine details, improving the accuracy of pose estimation in diverse scenarios.
+
+\textbf{Data Augmentation:} Techniques such as rotation, scaling, and flipping are used to augment training data, helping the model generalize better to different poses and viewpoints.
+
+\textbf{Heatmaps:} Many state-of-the-art methods predict heatmaps for each key point, where the intensity of the heatmap at each pixel indicates the likelihood of the key point being at that location. This approach provides spatial localization and helps refine predictions.
+
+\subsubsection{Depth Estimation}
+
+Depth estimation involves predicting the distance of each pixel in an image from the camera. This task is essential for 3D scene understanding and has applications in robotics, autonomous vehicles, and augmented reality.
+
+\subparagraph{Key Concepts and Methods}
+
+\textbf{Stereo Matching:} Traditional depth estimation methods often rely on stereo matching, which uses two images captured from slightly different viewpoints to triangulate the depth of objects. The disparity between corresponding points in the two images is used to compute depth.
+
+\[
+d = \frac{fB}{x_L - x_R}
+\]
+
+where \( d \) is the depth, \( f \) is the focal length, \( B \) is the baseline (distance between the two cameras), and \( x_L \) and \( x_R \) are the coordinates of the corresponding points in the left and right images.
+
+\textbf{Depth from Monocular Images:} Recent advancements have enabled depth estimation from a single image, known as monocular depth estimation. This approach uses deep learning to infer depth by learning from large datasets of images with corresponding depth maps.
+
+\textbf{Eigen et al. (2014):} This seminal work introduced a multi-scale deep network for monocular depth estimation. The network predicts coarse depth maps at a lower resolution and refines them using higher-resolution predictions, capturing both global context and local details.
+
+\[
+L = \frac{1}{n} \sum_{i} \left| \log d_i - \log d_i^* \right|
+\]
+
+where \( d_i \) is the predicted depth and \( d_i^* \) is the ground truth depth.
+
+\textbf{DORN (2018):} The Deep Ordinal Regression Network (DORN) formulates depth estimation as an ordinal regression problem, predicting discrete depth levels instead of continuous values. This method improves depth estimation accuracy by leveraging ordinal relationships between depth levels.
+
+\paragraph{SC-Depth}
+
+SC-Depth (Self-Calibrating Depth) is a novel approach for monocular depth estimation that introduces self-calibrating mechanisms to enhance the accuracy and robustness of depth predictions. The primary innovation of SC-Depth lies in its ability to adaptively adjust its parameters and features based on the input image, thereby improving depth estimation performance in diverse and challenging scenarios.
+
+\paragraph{Architecture}
+
+The architecture of SC-Depth comprises three main components:
+
+\begin{itemize}
+    \item \textbf{Feature Extraction Backbone:} A convolutional neural network (CNN) backbone is used to extract rich, multi-scale features from the input image. Common choices for the backbone include ResNet or EfficientNet, which are known for their strong feature extraction capabilities.
+    
+    \item \textbf{Self-Calibrating Module:} This module is the core innovation of SC-Depth. It consists of a set of learnable parameters and dynamic filters that adjust based on the input image characteristics. The self-calibrating module processes the extracted features and refines them, ensuring that the depth estimation model is well-calibrated for each specific input.
+    
+    \item \textbf{Depth Prediction Head:} The refined features are fed into a depth prediction head, which typically includes upsampling layers and regression layers to produce the final depth map. The depth prediction head outputs a dense depth map where each pixel represents the estimated distance from the camera.
+\end{itemize}
+
+\paragraph{Key Insights}
+
+SC-Depth introduces several key insights and improvements to monocular depth estimation:
+
+\begin{itemize}
+    \item \textbf{Adaptive Feature Calibration:} By incorporating a self-calibrating module, SC-Depth can adaptively fine-tune its parameters and features based on the specific input image. This adaptability allows the model to handle a wide range of lighting conditions, textures, and scene complexities.
+    
+    \item \textbf{Enhanced Robustness:} The ability to self-calibrate enables SC-Depth to maintain high performance even in challenging scenarios, such as low-light conditions, highly textured surfaces, and dynamic scenes. This robustness is a significant improvement over traditional depth estimation methods that may struggle in such conditions.
+    
+    \item \textbf{Improved Accuracy:} The dynamic adjustment of features ensures that the depth predictions are more accurate and consistent. SC-Depth leverages the flexibility of the self-calibrating module to correct potential errors and refine depth estimates in real-time.
+\end{itemize}
+
+\paragraph{Improvements Over Previous Works}
+
+SC-Depth introduces several advancements over previous monocular depth estimation methods:
+
+\begin{itemize}
+    \item \textbf{Self-Calibrating Mechanism:} Unlike conventional models that use static parameters, SC-Depth's self-calibrating mechanism allows the model to dynamically adjust to different input conditions, leading to improved accuracy and robustness.
+    
+    \item \textbf{Handling Diverse Conditions:} SC-Depth excels in diverse and challenging environments, including varying lighting conditions and dynamic scenes. This versatility marks a significant improvement over previous methods that often require extensive training data for specific conditions.
+    
+    \item \textbf{Real-Time Performance:} Despite its sophisticated self-calibrating module, SC-Depth is designed to be computationally efficient, enabling real-time depth estimation. This efficiency makes it suitable for practical applications such as autonomous driving, robotics, and augmented reality.
+\end{itemize}
+
+\paragraph{Conclusion}
+
+In conclusion, SC-Depth represents a significant step forward in monocular depth estimation by introducing a self-calibrating mechanism that enhances the model's adaptability, robustness, and accuracy. Its ability to dynamically adjust to varying input conditions and maintain real-time performance makes it a valuable addition to the field of depth estimation.
+
+\paragraph{Challenges and Techniques}
+
+Depth estimation presents several challenges, including varying lighting conditions, textureless surfaces, and dynamic scenes. To address these challenges, researchers use a variety of techniques:
+
+\textbf{Loss Functions:} Designing effective loss functions, such as the BerHu loss and the Scale-Invariant Logarithmic Loss, helps improve depth estimation by penalizing large depth errors and emphasizing relative depth relationships.
+
+\[
+L_{\text{BerHu}} = \begin{cases} 
+|x| & \text{if } |x| \leq c \\
+\frac{x^2 + c^2}{2c} & \text{if } |x| > c 
+\end{cases}
+\]
+
+\textbf{Data Augmentation:} Augmenting training data with synthetic depth maps, generated from computer graphics models or simulated environments, helps improve model robustness and generalization to real-world scenarios.
+
+\textbf{Sensor Fusion:} Combining data from multiple sensors, such as RGB cameras, LiDAR, and depth sensors, provides complementary information and improves depth estimation accuracy, particularly in challenging environments.
+
+\subsection{Image/Video Generation}
+
+\subsubsection{Latent Diffusion Models for Image Generation}
+
+Latent diffusion models (LDMs) are a class of generative models that have gained attention for their ability to produce high-quality images while avoiding some of the limitations associated with other generative models like variational autoencoders (VAEs). In this section, we provide an in-depth overview of the LDM architecture and discuss its advantages, including a comparison with VAEs.
+
+\subsubsection{Latent Diffusion Model Architecture}
+
+The core idea behind LDMs is to model the generation process as a diffusion process, starting from a simple noise distribution and progressively transforming it into a complex data distribution through a series of denoising steps. The diffusion process can be viewed as a continuous-time stochastic process, where the image is gradually corrupted by injecting noise at each time step. The reverse process, known as the denoising process, aims to learn a denoising function that can remove the injected noise and recover the original image.
+
+The denoising function in LDMs is typically parameterized by a deep neural network, which is trained to minimize the difference between the denoised image and the ground truth image at each time step. The architecture of this network can vary, but it often includes components such as convolutional layers, residual connections, and normalization layers to facilitate efficient learning.
+
+Once the denoising function is learned, it can be used to generate new images by sampling from the noise distribution and applying the denoising process in reverse. This is done by iteratively applying the learned denoising function to the noisy samples, progressively refining the generated images until they resemble samples from the target data distribution.
+
+\subsubsection{Stable Diffusion}
+
+A recent development in LDMs is the introduction of the stable diffusion framework, which improves the training and generation dynamics of LDMs by incorporating a stability-inducing regularization term into the training objective. This regularization term encourages the denoising function to be Lipschitz continuous, which helps prevent unstable behaviors during training and generation. As a result, stable diffusion models can generate even higher-quality images while maintaining stable training dynamics.
+
+\subsubsection{Advantages of Latent Diffusion Models}
+
+LDMs offer several advantages over other generative models, such as VAEs:
+
+\textbf{Reconstruction Quality:} LDMs can generate high-quality images with sharp details, in contrast to VAEs, which often produce over-smoothed images due to the pixel-wise reconstruction loss term in their objective function.
+
+\textbf{Posterior Collapse:} LDMs do not suffer from posterior collapse, a common issue in VAEs where the learned latent variables become less expressive and do not contribute significantly to the generative process.
+
+\textbf{Stability and Training Dynamics:} LDMs benefit from a more direct and stable optimization problem, which results in improved training dynamics and stable convergence, leading to better image generation performance.
+
+\textbf{Flexibility:} LDMs offer a flexible framework that can be adapted to a variety of tasks, such as conditional image generation and domain adaptation, by conditioning the denoising function on additional information.
+
+In conclusion, latent diffusion models provide a powerful and flexible approach to image generation, with several advantages over alternative generative models like VAEs. The stable diffusion framework further enhances the performance and stability of LDMs, making them a promising choice for various image generation tasks.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.45]{./media/stablediff.jpeg}
+    \caption{Stable Diffusion Architecture}
+    \label{fig:stable_diff}
+\end{figure}
+
+
+\subsection{ 3D Reconstruction}
+
+3D reconstruction is the process of capturing the shape and appearance of real objects and environments, creating a three-dimensional representation. This process is fundamental in applications such as computer graphics, virtual reality, autonomous driving, and medical imaging.
+
+\subsubsection{Overview}
+
+3D reconstruction techniques can be broadly categorized into passive and active methods:
+
+\begin{itemize}
+    \item \textbf{Passive Methods:} These methods rely on analyzing visual information from multiple images. Examples include Structure from Motion (SfM) and Multi-View Stereo (MVS).
+    \item \textbf{Active Methods:} These methods use active sensors such as LiDAR or structured light to directly measure the 3D structure of the scene.
+\end{itemize}
+
+\subsubsection{Structure from Motion (SfM)}
+
+Structure from Motion (SfM) is a passive technique that reconstructs 3D structure from a series of 2D images taken from different viewpoints. SfM simultaneously estimates the camera parameters and the 3D coordinates of points in the scene.
+
+\paragraph{Key Steps}
+
+\begin{enumerate}
+    \item \textbf{Feature Detection and Matching:} Detect key points in each image and match them across images using descriptors like SIFT or ORB.
+    \item \textbf{Initial Pose Estimation:} Use matched key points to estimate the relative camera poses (rotation and translation) using methods like the eight-point algorithm or PnP (Perspective-n-Point).
+    \item \textbf{Bundle Adjustment:} Refine the camera poses and 3D points by minimizing the reprojection error, which is the difference between the observed and projected points.
+\end{enumerate}
+
+\paragraph{Mathematical Formulation}
+
+Let \( x_{ij} \) be the projection of the 3D point \( X_j \) onto the image \( i \). The reprojection error \( e_{ij} \) is given by:
+
+\[
+e_{ij} = x_{ij} - \pi(K [R_i | t_i] X_j)
+\]
+
+where \( \pi \) is the projection function, \( K \) is the camera intrinsic matrix, and \( [R_i | t_i] \) are the rotation and translation matrices for the \( i \)-th camera.
+
+The bundle adjustment minimizes the sum of squared reprojection errors:
+
+\[
+\min_{R_i, t_i, X_j} \sum_{i,j} \| e_{ij} \|^2
+\]
+
+\paragraph{Key Models and Intuitions}
+
+\textbf{VisualSFM:}
+\begin{itemize}
+    \item VisualSFM is a popular tool that implements SfM using a graphical user interface (GUI) for ease of use.
+    \item It integrates feature detection, matching, and bundle adjustment into a seamless workflow.
+    \item The key intuition is to provide an accessible yet powerful solution for 3D reconstruction from multiple images.
+\end{itemize}
+
+\textbf{COLMAP:}
+\begin{itemize}
+    \item COLMAP is a general-purpose SfM and MVS pipeline with a command-line interface.
+    \item It offers state-of-the-art algorithms for feature extraction, matching, and dense reconstruction.
+    \item The intuition behind COLMAP is to offer flexibility and scalability for various 3D reconstruction tasks.
+\end{itemize}
+
+\subsubsection{Multi-View Stereo (MVS)}
+
+Multi-View Stereo (MVS) builds on SfM by computing dense 3D point clouds from multiple images. MVS aims to reconstruct detailed 3D surfaces by finding correspondences across many images.
+
+\paragraph{Key Techniques}
+
+\begin{itemize}
+    \item \textbf{Depth Map Estimation:} Compute depth maps for each image using stereo matching techniques.
+    \item \textbf{Fusion:} Combine depth maps into a consistent 3D model by merging and filtering the points.
+\end{itemize}
+
+\paragraph{Mathematical Formulation}
+
+The depth \( d \) of a point can be estimated using the disparity \( \delta \) between corresponding points in stereo images:
+
+\[
+d = \frac{B f}{\delta}
+\]
+
+where \( B \) is the baseline distance between the cameras, and \( f \) is the focal length.
+
+\paragraph{Key Models and Intuitions}
+
+\textbf{PMVS (Patch-based Multi-View Stereo):}
+\begin{itemize}
+    \item PMVS reconstructs surfaces by expanding small image patches across views.
+    \item The intuition is to achieve robust and accurate dense reconstruction by aggregating information from multiple images.
+\end{itemize}
+
+\textbf{OpenMVS:}
+\begin{itemize}
+    \item OpenMVS is an open-source library that provides tools for dense 3D reconstruction.
+    \item It integrates depth map estimation, fusion, and surface reconstruction into a complete pipeline.
+    \item The key intuition is to offer an accessible and extensible solution for high-quality 3D reconstruction.
+\end{itemize}
+
+\subsubsection{Active Methods}
+
+Active methods use sensors to directly capture depth information. These methods include LiDAR, structured light, and time-of-flight cameras.
+
+\paragraph{LiDAR}
+
+LiDAR (Light Detection and Ranging) uses laser pulses to measure distances to objects. By scanning the environment, LiDAR generates a dense 3D point cloud.
+
+\[
+d = \frac{ct}{2}
+\]
+
+where \( d \) is the distance, \( c \) is the speed of light, and \( t \) is the time taken for the laser pulse to return.
+
+\paragraph{Structured Light}
+
+Structured light projects a known pattern onto the scene and captures the deformation of the pattern to compute depth. The depth \( z \) is calculated using triangulation.
+
+\[
+z = \frac{B f}{d}
+\]
+
+where \( B \) is the baseline distance between the projector and camera, \( f \) is the focal length, and \( d \) is the disparity.
+
+\paragraph{Time-of-Flight (ToF) Cameras}
+
+ToF cameras measure the time it takes for light to travel to an object and back to compute depth. This method provides real-time depth information.
+
+\subsubsection{Challenges}
+
+\begin{itemize}
+    \item \textbf{Occlusions:} Objects may be partially or fully occluded in some views, making it challenging to reconstruct the complete 3D shape.
+    \item \textbf{Textureless Surfaces:} Surfaces with little texture provide few features for matching.
+    \item \textbf{Computational Complexity:} Dense 
+
+3D reconstruction requires significant computational resources.
+\end{itemize}
+
+\subsubsection{NeRF}
+
+Neural Radiance Fields (NeRF) are a class of models designed for 3D scene representation and rendering. NeRF models use a fully connected deep neural network to represent a continuous volumetric scene function, which maps 3D coordinates and viewing directions to RGB color and volume density.
+
+\paragraph{NeRF Architecture}
+
+The core of NeRF is a neural network that takes in a 3D position and a viewing direction as input and outputs the color and density at that position. The network is trained on a set of 2D images of the scene along with their camera parameters. During training, the network learns to approximate the volumetric scene function that best fits the observed images.
+
+The rendering process involves casting rays through the scene, accumulating color and density values along each ray using volumetric rendering techniques. This allows NeRF to synthesize novel views of the scene from arbitrary camera positions.
+
+\paragraph{Applications of NeRF}
+
+NeRF has been successfully applied to various tasks, including:
+\begin{itemize}
+    \item Novel view synthesis
+    \item 3D reconstruction
+    \item Virtual reality and augmented reality applications
+\end{itemize}
+
+\paragraph{Advantages of NeRF}
+
+\textbf{High-Quality Rendering:} NeRF can produce photorealistic images with fine details and complex lighting effects.
+
+\textbf{Continuous Representation:} Unlike voxel grids or mesh-based methods, NeRF provides a continuous representation of the scene, allowing for smooth interpolation between views.
+
+\textbf{Flexibility:} NeRF can be trained on different types of scenes, from synthetic to real-world environments, and can generalize to novel views not seen during training.
+
+\subsubsection{Gaussian Splatting}
+
+Gaussian splatting is a technique used in 3D reconstruction and neural scene representation. It involves representing a 3D scene using Gaussian functions to model the geometry and appearance of objects within the scene. This method offers several advantages, including efficient rendering and the ability to capture fine details compared to NeRF.
+
+\paragraph{Overview}
+
+In Gaussian splatting, a 3D scene is represented by a collection of Gaussians, each defined by parameters such as mean, covariance, and color. These Gaussians can be used to approximate the appearance of the scene when projected onto a 2D image plane.
+
+\paragraph{Mathematical Formulation}
+
+Each Gaussian in the 3D scene can be defined by its mean \( \mu \), covariance matrix \( \Sigma \), and color \( c \). The projection of a Gaussian onto a 2D image plane results in an elliptical shape with its own mean and covariance, influenced by the camera's position and orientation.
+
+The intensity \( I \) of a pixel \( (x, y) \) in the image can be calculated by summing the contributions of all Gaussians:
+
+\[
+I(x, y) = \sum_{i} w_i \exp \left( -\frac{1}{2} (p - \mu_i)^T \Sigma_i^{-1} (p - \mu_i) \right)
+\]
+
+where \( w_i \) is the weight of the \(i\)-th Gaussian, \( \mu_i \) and \( \Sigma_i \) are the mean and covariance of the \(i\)-th Gaussian, and \( p \) is the position of the pixel.
+
+\paragraph{Rendering Process}
+
+The rendering process involves projecting each 3D Gaussian onto the image plane and accumulating their contributions to compute the final pixel intensities. This can be done efficiently using GPU acceleration, making Gaussian splatting suitable for real-time applications.
+
+\paragraph{Advantages over NeRF}
+
+\textbf{Rendering Efficiency:} Gaussian splatting can be rendered efficiently using GPU acceleration, enabling real-time performance, whereas NeRF is computationally intensive and slower to render.
+
+\textbf{Detail Preservation:} Gaussian splatting captures fine details of the 3D scene, providing high-quality visual representations similar to NeRF but with potentially faster rendering times.
+
+\textbf{Ease of Implementation:} Gaussian splatting is often simpler to implement and can achieve comparable visual quality with less computational overhead.
+
+\paragraph{Similarities to NeRF}
+
+\textbf{Scene Representation:} Both NeRF and Gaussian splatting represent 3D scenes and are used for novel view synthesis and 3D reconstruction.
+
+\textbf{Applications:} Both techniques are applied in virtual reality, augmented reality, and high-quality rendering tasks.
+
+\paragraph{Differences from NeRF}
+
+\textbf{Representation Method:} NeRF uses a neural network to model the scene as a continuous volumetric function, while Gaussian splatting uses a collection of discrete Gaussian functions.
+
+\textbf{Rendering Approach:} NeRF performs volumetric rendering by casting rays and accumulating color and density along each ray. Gaussian splatting projects Gaussians onto the image plane and accumulates their contributions.
+
+\textbf{Computational Requirements:} NeRF is more computationally intensive and requires longer training times, whereas Gaussian splatting can achieve efficient rendering with GPU acceleration.
+
+\paragraph{Applications}
+
+Gaussian splatting has various applications, including:
+\begin{itemize}
+    \item \textbf{3D Scene Reconstruction:} Creating detailed and accurate 3D models of real-world scenes.
+    \item \textbf{Neural Rendering:} Generating photorealistic images from 3D models.
+    \item \textbf{Virtual Reality and Augmented Reality:} Enhancing the realism and immersion of virtual environments.
+\end{itemize}
+
+\paragraph{Advantages}
+
+\begin{itemize}
+    \item \textbf{Efficiency:} Gaussian splatting can be efficiently implemented using GPU acceleration, enabling real-time rendering.
+    \item \textbf{Detail Preservation:} The technique captures fine details of the 3D scene, providing high-quality visual representations.
+    \item \textbf{Flexibility:} Gaussian splatting can be combined with other neural rendering techniques to enhance performance and visual quality.
+\end{itemize}
+
+
+\subsection{Optical Flow and Motion Estimation}
+
+Optical flow and motion estimation are essential techniques in computer vision for understanding and analyzing the motion of objects within a sequence of images or a video. These techniques have applications in areas such as video compression, object tracking, and autonomous driving.
+
+\subsubsection{Optical Flow}
+
+Optical flow refers to the apparent motion of objects between consecutive frames of a video, caused by the relative motion between the observer and the scene. The goal of optical flow estimation is to compute a vector field where each vector represents the displacement of a pixel from one frame to the next.
+
+\paragraph{Mathematical Formulation}
+
+Let \( I(x, y, t) \) be the intensity of the image at pixel \((x, y)\) and time \( t \). Assuming that the intensity of a point remains constant over time, the optical flow constraint equation can be derived as:
+
+\[
+I(x, y, t) = I(x + u, y + v, t + 1)
+\]
+
+where \( (u, v) \) represents the optical flow vector at pixel \((x, y)\).
+
+Using a first-order Taylor series expansion, this equation can be approximated as:
+
+\[
+I(x + u, y + v, t + 1) \approx I(x, y, t) + \frac{\partial I}{\partial x} u + \frac{\partial I}{\partial y} v + \frac{\partial I}{\partial t}
+\]
+
+By subtracting \( I(x, y, t) \) from both sides, we get:
+
+\[
+\frac{\partial I}{\partial x} u + \frac{\partial I}{\partial y} v + \frac{\partial I}{\partial t} = 0
+\]
+
+This can be written in a compact form as:
+
+\[
+\nabla I \cdot \mathbf{v} + I_t = 0
+\]
+
+where \( \nabla I \) is the spatial gradient of the image, \( \mathbf{v} = (u, v) \) is the optical flow vector, and \( I_t \) is the temporal gradient.
+
+\paragraph{Key Methods}
+
+\textbf{Lucas-Kanade Method:}
+\begin{itemize}
+    \item Assumes that the flow is constant within a small neighborhood around each pixel.
+    \item Solves for the flow vector \( \mathbf{v} \) using a least squares approach.
+    \item The system of equations for a pixel and its neighbors can be written as:
+    \[
+    A \mathbf{v} = \mathbf{b}
+    \]
+    where \( A \) is a matrix of image gradients and \( \mathbf{b} \) is a vector of temporal gradients.
+\end{itemize}
+
+\textbf{Horn-Schunck Method:}
+\begin{itemize}
+    \item Assumes that the flow is smooth over the entire image.
+    \item Introduces a global smoothness term to the optical flow constraint equation.
+    \item The energy function to be minimized is:
+    \[
+    E = \int \int \left( (\nabla I \cdot \mathbf{v} + I_t)^2 + \alpha^2 (\|\nabla u\|^2 + \|\nabla v\|^2) \right) \, dx \, dy
+    \]
+    where \( \alpha \) is a regularization parameter.
+\end{itemize}
+
+\subsubsection{Motion Estimation}
+
+Motion estimation is the process of determining the motion vectors that describe the transformation from one image to another in a sequence. It is closely related to optical flow but can involve more complex transformations, such as rotations and scalings.
+
+\paragraph{Block Matching}
+
+Block matching is a common technique used for motion estimation in video compression. The image is divided into blocks, and for each block in the current frame, the most similar block in the reference frame is found. The displacement between these blocks is the motion vector.
+
+\textbf{Sum of Absolute Differences (SAD):}
+\begin{itemize}
+    \item Measures the similarity between blocks by calculating the sum of absolute differences of pixel intensities.
+    \item For a block \( B \) in the current frame and a candidate block \( B' \) in the reference frame, the SAD is given by:
+    \[
+    \text{SAD} = \sum_{i, j} |I(i, j) - I'(i + u, j + v)|
+    \]
+    where \( (u, v) \) is the displacement vector.
+\end{itemize}
+
+\textbf{Normalized Cross-Correlation (NCC):}
+\begin{itemize}
+    \item Measures the similarity between blocks using cross-correlation.
+    \item For blocks \( B \) and \( B' \), the NCC is given by:
+    \[
+    \text{NCC} = \frac{\sum_{i, j} (I(i, j) - \bar{I})(I'(i + u, j + v) - \bar{I'})}{\sqrt{\sum_{i, j} (I(i, j) - \bar{I})^2 \sum_{i, j} (I'(i + u, j + v) - \bar{I'})^2}}
+    \]
+    where \( \bar{I} \) and \( \bar{I'} \) are the mean intensities of the blocks \( B \) and \( B' \).
+\end{itemize}
+
+\subsubsection{Applications}
+
+Optical flow and motion estimation are used in various applications, including:
+
+\begin{itemize}
+    \item \textbf{Video Compression:} Efficiently encoding motion between frames to reduce data size.
+    \item \textbf{Object Tracking:} Following the movement of objects across frames in a video.
+    \item \textbf{Autonomous Driving:} Understanding the motion of vehicles and pedestrians for navigation and collision avoidance.
+    \item \textbf{Stabilization:} Correcting camera shake and jitter in videos.
+\end{itemize}
+
+\subsubsection{Challenges}
+
+\begin{itemize}
+    \item \textbf{Occlusions:} Parts of the scene may be occluded in some frames, making it difficult to track motion.
+    \item \textbf{Lighting Changes:} Variations in lighting can affect the accuracy of motion estimation.
+    \item \textbf{Large Motions:} Handling large displacements between frames can be challenging.
+\end{itemize}
+
+\subsection{Vision Transformers (ViT) and Successors}
+
+The Vision Transformer (ViT) architecture represents a significant innovation in computer vision by applying the transformer model, originally designed for natural language processing (NLP), to image data. ViTs and their successors have shown that self-attention mechanisms can be highly effective for image classification and other vision tasks.
+
+\subsubsection{Vision Transformer (ViT)}
+
+\paragraph{Introduction}
+
+The Vision Transformer (ViT) introduced in the paper "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale." ViT adapts the transformer architecture to handle image data by treating image patches as tokens, similar to words in text.
+
+\paragraph{Architecture Overview}
+
+\paragraph{Patch Embedding}
+
+ViT processes an image by dividing it into fixed-size, non-overlapping patches. Each patch is then flattened and linearly projected into an embedding vector. This step converts the image into a sequence of patch embeddings, akin to token embeddings in NLP.
+
+\[
+\text{Patch Embedding} = \text{Linear}(\text{Flatten}(x))
+\]
+
+Given an input image \(x \in \mathbb{R}^{H \times W \times C}\), it is divided into patches of size \(P \times P\), resulting in \(\frac{HW}{P^2}\) patches. Each patch is flattened into a vector and projected linearly to a fixed size \(D\).
+
+\paragraph{Position Embedding}
+
+To retain spatial information, learnable position embeddings are added to the patch embeddings. This allows the model to incorporate the order and relative positions of patches within the image.
+
+\[
+z_0 = [x_{class}; x_p^1 E; x_p^2 E; \dots; x_p^N E] + E_{pos}
+\]
+
+where \(x_{class}\) is a learnable class token prepended to the sequence, \(E\) is the patch embedding projection, and \(E_{pos}\) is the position embedding.
+
+\paragraph{Transformer Encoder}
+
+The sequence of embedded patches is passed through a stack of transformer encoder layers. Each encoder layer comprises multi-head self-attention (MHSA) and a feedforward neural network (FFN), with residual connections and layer normalization.
+
+\paragraph{Multi-Head Self-Attention (MHSA)}
+
+MHSA allows the model to capture relationships between different patches by computing attention scores for each patch with respect to all other patches. The self-attention mechanism calculates these scores using the query, key, and value matrices derived from the input embeddings.
+
+\[
+\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^T}{\sqrt{d_k}} \right) V
+\]
+
+\paragraph{Feedforward Neural Network (FFN)}
+
+The FFN consists of two linear layers with a ReLU or GELU activation in between. It is applied independently to each token in the sequence.
+
+\[
+\text{FFN}(x) = W_2 \cdot \text{GELU}(W_1 \cdot x + b_1) + b_2
+\]
+
+\paragraph{Classification Head}
+
+After passing through the transformer encoder layers, the output corresponding to the class token is fed into a classification head, typically a linear layer, to produce the final class probabilities.
+
+\[
+\text{Class Probabilities} = \text{softmax}(W \cdot z_L^0)
+\]
+
+where \(z_L^0\) is the output embedding of the class token from the last transformer encoder layer.
+
+\paragraph{Training and Performance}
+
+ViT models are pre-trained on large datasets (e.g., JFT-300M) and then fine-tuned on smaller datasets (e.g., ImageNet). They have demonstrated competitive performance with traditional CNN-based models, particularly when large-scale data is available for pre-training.
+
+\paragraph{Advantages and Challenges}
+
+\begin{itemize}
+    \item \textbf{Advantages:} ViT leverages self-attention to capture long-range dependencies and global context effectively, leading to strong performance in image classification tasks.
+    \item \textbf{Challenges:} ViT requires large amounts of data for pre-training to achieve competitive performance and has higher computational complexity for long sequences of patches.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./media/vit.png}
+    \caption{ViT Architecture}
+    \label{fig:vit}
+\end{figure}
+
+\subsubsection{Successors of Vision Transformer (ViT)}
+
+\paragraph{Swin Transformer (2021)}
+
+\paragraph{Introduction}
+
+The Swin Transformer introduced in the paper "Swin Transformer: Hierarchical Vision Transformer using Shifted Windows," aims to address the computational inefficiencies of ViT by introducing a hierarchical architecture and local self-attention mechanisms.
+
+\paragraph{Architecture Overview}
+
+\paragraph{Shifted Window Self-Attention}
+
+\textbf{Window-Based Self-Attention:} The Swin Transformer divides the image into non-overlapping windows and computes self-attention within each window. This reduces the computational complexity compared to global self-attention.
+
+\[
+\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^T}{\sqrt{d_k}} + B \right) V
+\]
+
+where \(B\) is a relative position bias that encodes the spatial relationship between patches within a window.
+
+\paragraph{Shifted Window Partitioning}
+
+To enable cross-window interactions, the windows are shifted by a fixed offset between consecutive layers. This shifting mechanism ensures that each patch can attend to patches from neighboring windows, enhancing the model's ability to capture global context.
+
+\paragraph{Hierarchical Structure}
+
+The Swin Transformer employs a hierarchical structure with multiple stages, where the patch size is doubled, and the number of patches is reduced by a factor of 4 at each stage. This design allows the model to process high-resolution images efficiently.
+
+\paragraph{Transformer Blocks}
+
+Each stage consists of multiple transformer blocks, each containing a shifted window-based self-attention layer followed by a feedforward network (FFN).
+
+\paragraph{Advantages and Performance}
+
+\begin{itemize}
+    \item \textbf{Advantages:} Swin Transformer reduces the computational complexity of self-attention and improves the model's ability to capture hierarchical features, leading to state-of-the-art performance on image classification, object detection, and segmentation tasks.
+    \item \textbf{Performance:} Swin Transformer achieves better accuracy and efficiency compared to ViT and CNN-based models on various benchmarks.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./media/swin_vit.png}
+    \caption{Swin ViT Architecture}
+    \label{fig:vit}
+\end{figure}
+
+\paragraph{Other Relevant Successors}
+
+\paragraph{DeiT (2021)}
+
+The Data-efficient Image Transformer (DeiT) improves the data efficiency of ViTs, enabling competitive performance with smaller datasets. DeiT uses a teacher-student training strategy and knowledge distillation to enhance the learning process.
+
+\paragraph{Segmenter (2021)}
+
+Segmenter adapts ViTs for semantic segmentation tasks. It uses a transformer encoder to process image patches and a lightweight decoder to generate segmentation masks, demonstrating strong performance on benchmarks like ADE20K.
+
+\paragraph{MViT (2021)}
+
+The Multiscale Vision Transformer (MViT) introduces multiscale feature hierarchies within the transformer framework, enabling efficient processing of high-resolution images. MViT shows improvements in both accuracy and computational efficiency for tasks like image classification and object detection.
+
+
+\subsection{Foundation Models in Computer Vision}
+
+Foundation models have revolutionized computer vision tasks such as image classification, object detection, and image segmentation. These models, initially limited to language tasks, have begun transforming industries like autonomous driving, medical imaging, and robotics by providing unprecedented visual understanding.
+
+\subsubsection{What is a Foundation Model?}
+
+A foundation model is a pre-trained deep neural network that serves as the backbone for various downstream tasks such as object classification, object detection, and image segmentation. Trained on massive, diverse datasets, these models capture visual features universal to many domains. This approach leverages neural networks’ powerful representational learning capabilities to generalize well across tasks.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.3]{./media/cv_foundational_models.png}
+    \caption{CV Foundation Models}
+    \label{fig:foundation_cv}
+\end{figure}
+
+\subsubsection{Embedding Extractors}
+
+Embedding extractors are a subset of foundation models that transform raw input data, like images, into compact vector representations, known as embeddings. These embeddings capture meaningful features from the input data and are crucial for transferring knowledge from a pre-trained model to a specific task.
+
+\paragraph{CLIP (OpenAI, 2021)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images and Text.
+    \item \textbf{Outputs:} Dense vector representations (embeddings) for both the input image and text that preserve semantic similarity.
+    \item \textbf{Description:} CLIP (Contrastive Language-Image Pre-training) is a series of multimodal image and text encoders that understand and interpret images in the context of natural language.
+\end{itemize}
+
+\paragraph{DINOv2 (Meta AI, 2023)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images.
+    \item \textbf{Outputs:} Dense semantic vector representations for the input image.
+    \item \textbf{Description:} DINOv2 focuses on the vision domain with a novel self-supervised training setup designed to maximize performance on downstream vision tasks.
+\end{itemize}
+
+\paragraph{ImageBind (Meta AI, 2023)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images, Text, Audio, Depth Maps, Thermal Image Maps, and Inertial Measurement Units.
+    \item \textbf{Outputs:} Dense semantic vector representations.
+    \item \textbf{Description:} ImageBind is a multimodal encoder that supports various mediums, improving image and text encoding support.
+\end{itemize}
+
+\subsubsection{Zero-Shot Models}
+
+Zero-shot models are pre-trained neural networks that aim to perform tasks directly on unseen data without requiring additional training. These models are particularly useful in scenarios with many object categories and little or no labeled data.
+
+\paragraph{Segment Anything Model (Meta AI, 2023)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images and Point Prompts.
+    \item \textbf{Outputs:} Instance segmentations of objects at the given point.
+    \item \textbf{Description:} The Segment Anything Model (SAM) segments any object in an image or video with high quality and efficiency, generalizing zero-shot to unfamiliar objects and images.
+\end{itemize}
+
+\paragraph{OWL-ViT (Google Research, 2022)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images and a Text Query.
+    \item \textbf{Outputs:} Open-Set Object Detection.
+    \item \textbf{Description:} OWL-ViT is an open-set object detector that can find object bounding boxes matching a text query, performing zero-shot object detection.
+\end{itemize}
+
+\subsubsection{State-of-the-Art Architectures}
+
+State-of-the-art architectures have proven their effectiveness in industrial object classification, detection, and segmentation tasks. Unlike foundation models, these architectures require bespoke training on a given task and labeled dataset.
+
+\paragraph{YOLO-NAS (Deci.ai, 2023)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images.
+    \item \textbf{Outputs:} Object Detection.
+    \item \textbf{Description:} YOLO-NAS (You Only Look Once — Neural Architecture Search) provides state-of-the-art real-time object detection capabilities.
+\end{itemize}
+
+\paragraph{Mask2Former (Meta AI, 2022)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images.
+    \item \textbf{Outputs:} Panoptic, Instance, and Semantic Segmentation.
+    \item \textbf{Description:} Mask2Former introduces a new Transformer decoder using masked attention, improving convergence and performance for segmentation tasks.
+\end{itemize}
+
+\paragraph{DETR (Meta AI, 2020)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images.
+    \item \textbf{Outputs:} Object Detection.
+    \item \textbf{Description:} DETR (DEtection TRansformer) views object detection as a direct set prediction problem, streamlining the detection pipeline.
+\end{itemize}
+
+TODO: Learn more about this DETR model. X-coder
+
+Flamingo? BLIP-2 MPLUG-OWN. Otter. Kosmos-2. DetGPT. GPT4RoI
+
+\paragraph{ConvNeXt (Meta AI, 2022)}
+
+\begin{itemize}
+    \item \textbf{Inputs:} Images.
+    \item \textbf{Outputs:} Classification, Object Detection, and Segmentation.
+    \item \textbf{Description:} ConvNeXt co-designs self-supervised learning techniques and architectural improvements to enhance the performance of ConvNets on various recognition benchmarks.
+\end{itemize}
+
+\subsection{Self-Supervised \& Weakly Supervised}
+
+Self-supervised, weakly supervised, and unsupervised learning are crucial paradigms in machine learning, enabling models to learn from unlabeled or partially labeled data. These approaches are particularly valuable in scenarios where labeled data is scarce or expensive to obtain. This section covers key concepts, methods, and notable models, focusing on their applications in computer vision.
+
+\subsubsection{Overview of Self-Supervised Learning}
+
+Self-supervised learning leverages the inherent structure of data to create surrogate labels for training. This involves designing pretext tasks, which are auxiliary tasks that enable the model to learn useful representations without explicit human annotations.
+
+\paragraph{Common Pretext Tasks}
+
+\begin{itemize}
+    \item \textbf{Colorization:} Predicting the color channels of an image given the grayscale version.
+    \item \textbf{Jigsaw Puzzles:} Rearranging shuffled patches of an image back to their original positions.
+    \item \textbf{Rotation Prediction:} Determining the rotation angle applied to an image.
+    \item \textbf{Contrastive Learning:} Learning representations by distinguishing between similar and dissimilar image pairs.
+\end{itemize}
+
+\subsection{Contrastive Learning}
+
+Contrastive learning is a self-supervised learning technique that learns useful representations by comparing similar and dissimilar pairs of data points. The key idea is to bring similar (positive) pairs closer in the representation space and push dissimilar (negative) pairs apart.
+
+\subsubsection{Architecture}
+
+A typical architecture for contrastive learning includes an encoder network, which can be a convolutional neural network (CNN) or a transformer, followed by a projection head that maps the encoded features to a lower-dimensional space suitable for computing similarities.
+
+\begin{itemize}
+    \item \textbf{Encoder Network:} Extracts features from the input images.
+    \item \textbf{Projection Head:} Maps the features to a space where contrastive loss is applied.
+\end{itemize}
+
+For example, in SimCLR (Simple Framework for Contrastive Learning of Visual Representations), the architecture consists of a ResNet encoder followed by a multi-layer perceptron (MLP) projection head.
+
+\subsubsection{Mathematical Formulation}
+
+The core of contrastive learning is the contrastive loss function, which aims to minimize the distance between positive pairs and maximize the distance between negative pairs. The most commonly used contrastive loss is the InfoNCE (Information Noise Contrastive Estimation) loss.
+
+Given a batch of $N$ images, we generate $2N$ augmented views (two for each image). Let $z_i$ and $z_j$ be the representations of a positive pair, and $z_k$ be the representation of a negative sample. The contrastive loss for a positive pair $(i, j)$ is defined as:
+
+\[
+\ell_{i,j} = -\log \frac{\exp(\text{sim}(z_i, z_j) / \tau)}{\sum_{k=1}^{2N} \mathbb{1}_{[k \neq i]} \exp(\text{sim}(z_i, z_k) / \tau)}
+\]
+
+where $\text{sim}(z_i, z_j)$ denotes the cosine similarity between $z_i$ and $z_j$, and $\tau$ is a temperature parameter.
+
+The total loss is computed by averaging over all positive pairs in the batch:
+
+\[
+L = \frac{1}{2N} \sum_{k=1}^{N} \left( \ell_{2k-1, 2k} + \ell_{2k, 2k-1} \right)
+\]
+
+\subsubsection{Intuition Behind Contrastive Learning}
+
+The intuition behind contrastive learning is to learn a representation space where similar inputs (positive pairs) are closer together and dissimilar inputs (negative pairs) are farther apart. This is achieved by contrasting the positive pairs against a large number of negative pairs, effectively teaching the model to discern subtle differences and similarities in the data.
+
+\subsubsection{Key Approaches}
+
+Several key approaches in contrastive learning have been proposed:
+
+\begin{itemize}
+    \item \textbf{SimCLR (Simple Framework for Contrastive Learning of Visual Representations):} Uses extensive data augmentation and a simple contrastive loss to learn visual representations without labels.
+    \item \textbf{MoCo (Momentum Contrast):} Introduces a memory bank to store a large number of negative samples efficiently.
+    \item \textbf{BYOL (Bootstrap Your Own Latent):} Eliminates the need for negative pairs by using a target network that slowly updates with the moving average of the online network.
+\end{itemize}
+
+\subsubsection{Applications}
+
+Contrastive learning has shown great promise in various computer vision tasks, including:
+
+\begin{itemize}
+    \item \textbf{Image Classification:} Pre-trained models using contrastive learning achieve competitive performance on standard classification benchmarks.
+    \item \textbf{Object Detection:} Learned representations can be fine-tuned for object detection tasks.
+    \item \textbf{Image Segmentation:} Contrastive learning helps in learning representations useful for pixel-level segmentation tasks.
+\end{itemize}
+
+Contrastive learning leverages the abundance of unlabeled data, making it a powerful tool in self-supervised learning for computer vision. The representations learned through contrastive learning are general and can be effectively transferred to various downstream tasks, significantly reducing the need for labeled data.
+
+\subsubsection{Masked Autoencoders (MAEs)}
+
+Masked Autoencoders (MAEs) are significant in self-supervised learning, especially for vision tasks. MAEs are designed to reconstruct missing parts of their input, typically images, by learning a robust latent representation.
+
+\paragraph{Concept and Architecture}
+
+\begin{itemize}
+    \item \textbf{Input Masking:} Randomly mask a significant portion of the input image.
+    \item \textbf{Encoder:} Processes the partially visible image to produce a latent representation.
+    \item \textbf{Decoder:} Attempts to reconstruct the original image from the latent representation.
+\end{itemize}
+
+\paragraph{Training Objective}
+
+The objective of MAEs is to minimize the reconstruction loss, measuring the difference between the reconstructed image and the original image. Common loss functions include Mean Squared Error (MSE) and L1 loss.
+
+\paragraph{Advantages and Applications}
+
+\begin{itemize}
+    \item \textbf{Efficient Learning:} Learn robust feature representations from unlabeled data.
+    \item \textbf{Transfer Learning:} Pre-trained MAEs can be fine-tuned for various downstream tasks such as classification, detection, and segmentation.
+    \item \textbf{Better Generalization:} Helps models generalize better to new tasks and datasets.
+\end{itemize}
+
+\subsubsection{Weakly Supervised Learning}
+
+Weakly supervised learning involves training models using weak labels, which are often cheaper to obtain but less precise than full labels. These include noisy, incomplete, or inexact labels.
+
+\paragraph{Common Approaches}
+
+\begin{itemize}
+    \item \textbf{Multiple Instance Learning (MIL):} Learns from labeled bags of instances, where only the bag label is known.
+    \item \textbf{Label Propagation:} Spreads labels from labeled to unlabeled data based on similarity.
+    \item \textbf{Noisy Label Handling:} Uses techniques like robust loss functions and noise-tolerant algorithms to manage label noise.
+\end{itemize}
+
 \section{Case Studies}
 \subsection{Named Entity Recognition (NER)}
 
@@ -2572,45 +4722,232 @@ Integrate diversity constraints into the personalization process to ensure a div
 
 By employing these strategies, the search ranking system can ensure a diverse set of search results that cater to various user preferences and interests, reducing the risk of over-personalization and promoting a more satisfying user experience.
 
+\subsection{Linear Algebra Basics for Self-Driving Technology}
 
+\subsubsection{Perspective Math}
 
+\paragraph{Homogeneous Coordinates}
 
+In computer vision, homogeneous coordinates are used to represent points in projective space, allowing for the modeling of perspective transformations.
 
+A point \((x, y, z)\) in 3D space is represented in homogeneous coordinates as \((x, y, z, 1)\). This allows for the use of matrix multiplication to perform transformations such as translation, rotation, scaling, and perspective projection.
 
-\subsection{Latent Diffusion Models for Image Generation}
+\[
+\begin{pmatrix}
+x' \\
+y' \\
+z' \\
+w'
+\end{pmatrix}
+=
+\begin{pmatrix}
+r_{11} & r_{12} & r_{13} & t_1 \\
+r_{21} & r_{22} & r_{23} & t_2 \\
+r_{31} & r_{32} & r_{33} & t_3 \\
+0 & 0 & 0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+x \\
+y \\
+z \\
+1
+\end{pmatrix}
+\]
 
-Latent diffusion models (LDMs) are a class of generative models that have gained attention for their ability to produce high-quality images while avoiding some of the limitations associated with other generative models like variational autoencoders (VAEs). In this section, we provide an in-depth overview of the LDM architecture and discuss its advantages, including a comparison with VAEs.
+After applying the transformation, the coordinates are converted back to Cartesian coordinates by dividing by the homogeneous coordinate \( w' \).
 
-\subsubsection{Latent Diffusion Model Architecture}
+\paragraph{Perspective Projection}
 
-The core idea behind LDMs is to model the generation process as a diffusion process, starting from a simple noise distribution and progressively transforming it into a complex data distribution through a series of denoising steps. The diffusion process can be viewed as a continuous-time stochastic process, where the image is gradually corrupted by injecting noise at each time step. The reverse process, known as the denoising process, aims to learn a denoising function that can remove the injected noise and recover the original image.
+Perspective projection is used to map 3D points onto a 2D image plane, simulating the way the human eye perceives depth.
 
-The denoising function in LDMs is typically parameterized by a deep neural network, which is trained to minimize the difference between the denoised image and the ground truth image at each time step. The architecture of this network can vary, but it often includes components such as convolutional layers, residual connections, and normalization layers to facilitate efficient learning.
+The projection matrix for a perspective projection is given by:
 
-Once the denoising function is learned, it can be used to generate new images by sampling from the noise distribution and applying the denoising process in reverse. This is done by iteratively applying the learned denoising function to the noisy samples, progressively refining the generated images until they resemble samples from the target data distribution.
+\[
+P =
+\begin{pmatrix}
+f & 0 & 0 & 0 \\
+0 & f & 0 & 0 \\
+0 & 0 & 1 & 0
+\end{pmatrix}
+\]
 
-\subsubsection{Stable Diffusion}
+where \( f \) is the focal length of the camera. The 3D point \((x, y, z)\) is projected onto the 2D point \((x', y')\) as follows:
 
-A recent development in LDMs is the introduction of the stable diffusion framework, which improves the training and generation dynamics of LDMs by incorporating a stability-inducing regularization term into the training objective. This regularization term encourages the denoising function to be Lipschitz continuous, which helps prevent unstable behaviors during training and generation. As a result, stable diffusion models can generate even higher-quality images while maintaining stable training dynamics.
+\[
+\begin{pmatrix}
+x' \\
+y' \\
+1
+\end{pmatrix}
+=
+P
+\begin{pmatrix}
+x \\
+y \\
+z \\
+1
+\end{pmatrix}
+\]
 
-\subsubsection{Advantages of Latent Diffusion Models}
+\subsubsection{Spectral Theorems}
 
-LDMs offer several advantages over other generative models, such as VAEs:
+The spectral theorem is a fundamental result in linear algebra that applies to symmetric matrices. It states that any symmetric matrix can be diagonalized by an orthogonal matrix.
 
-\textbf{Reconstruction Quality:} LDMs can generate high-quality images with sharp details, in contrast to VAEs, which often produce over-smoothed images due to the pixel-wise reconstruction loss term in their objective function.
+\paragraph{Eigenvalues and Eigenvectors}
 
-\textbf{Posterior Collapse:} LDMs do not suffer from posterior collapse, a common issue in VAEs where the learned latent variables become less expressive and do not contribute significantly to the generative process.
+For a symmetric matrix \( A \), there exist eigenvalues \( \lambda_i \) and corresponding eigenvectors \( v_i \) such that:
 
-\textbf{Stability and Training Dynamics:} LDMs benefit from a more direct and stable optimization problem, which results in improved training dynamics and stable convergence, leading to better image generation performance.
+\[
+A v_i = \lambda_i v_i
+\]
 
-\textbf{Flexibility:} LDMs offer a flexible framework that can be adapted to a variety of tasks, such as conditional image generation and domain adaptation, by conditioning the denoising function on additional information.
+\paragraph{Diagonalization}
 
-In conclusion, latent diffusion models provide a powerful and flexible approach to image generation, with several advantages over alternative generative models like VAEs. The stable diffusion framework further enhances the performance and stability of LDMs, making them a promising choice for various image generation tasks.
+A symmetric matrix \( A \) can be decomposed as:
 
+\[
+A = V \Lambda V^T
+\]
 
+where \( V \) is an orthogonal matrix whose columns are the eigenvectors of \( A \), and \( \Lambda \) is a diagonal matrix containing the eigenvalues of \( A \).
 
+\subsubsection{Exterior Algebra}
 
+Exterior algebra provides a framework for dealing with vectors, vector spaces, and linear transformations in a more general and abstract way. It is particularly useful in the context of differential forms and tensor calculus.
 
+\paragraph{Wedge Product}
+
+The wedge product \( \wedge \) is an associative and anti-commutative operation used to construct higher-dimensional objects from vectors. For vectors \( u \) and \( v \):
+
+\[
+u \wedge v = -v \wedge u
+\]
+
+\paragraph{Applications in Geometry}
+
+Exterior algebra is used to define geometric objects such as lines, planes, and volumes. For example, the area of a parallelogram defined by vectors \( u \) and \( v \) in \( \mathbb{R}^2 \) can be represented as:
+
+\[
+\text{Area} = \| u \wedge v \|
+\]
+
+\subsubsection{Canonical Forms}
+
+Canonical forms simplify the study of linear transformations by transforming matrices into a standard form, making it easier to analyze their properties.
+
+\paragraph{Jordan Canonical Form}
+
+The Jordan canonical form represents a linear operator in a way that reveals its eigenvalues and the structure of its eigenspaces.
+
+For a matrix \( A \), there exists an invertible matrix \( P \) such that:
+
+\[
+P^{-1}AP = J
+\]
+
+where \( J \) is the Jordan form of \( A \), a block diagonal matrix with Jordan blocks along the diagonal.
+
+\paragraph{Singular Value Decomposition (SVD)}
+
+SVD is a factorization of a matrix that generalizes the eigendecomposition to non-square matrices.
+
+For any matrix \( A \), there exist orthogonal matrices \( U \) and \( V \) and a diagonal matrix \( \Sigma \) such that:
+
+\[
+A = U \Sigma V^T
+\]
+
+where the diagonal entries of \( \Sigma \) are the singular values of \( A \).
+
+\subsubsection{Sensor Fusion}
+
+Sensor fusion involves combining data from multiple sensors to obtain more accurate and reliable information. In self-driving cars, common sensors include cameras, LiDAR, radar, and ultrasonic sensors.
+
+\paragraph{Kalman Filter}
+
+The Kalman filter is an algorithm used to estimate the state of a dynamic system from noisy measurements. It operates in two steps: prediction and update.
+
+\[
+\hat{x}_{k|k-1} = F \hat{x}_{k-1|k-1} + B u_{k-1}
+\]
+
+\[
+P_{k|k-1} = F P_{k-1|k-1} F^T + Q
+\]
+
+\[
+K_k = P_{k|k-1} H^T (H P_{k|k-1} H^T + R)^{-1}
+\]
+
+\[
+\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k (z_k - H \hat{x}_{k|k-1})
+\]
+
+\[
+P_{k|k} = (I - K_k H) P_{k|k-1}
+\]
+
+\paragraph{Particle Filter}
+
+The particle filter is a non-parametric approach to estimating the state of a system. It represents the posterior distribution of the state using a set of random samples (particles) and their associated weights.
+
+\[
+x_k^{[i]} \sim p(x_k | x_{k-1}^{[i]})
+\]
+
+\[
+w_k^{[i]} \propto p(z_k | x_k^{[i]})
+\]
+
+\paragraph{Sensor Fusion Techniques}
+
+Common sensor fusion techniques include Kalman filters, extended Kalman filters (EKF), unscented Kalman filters (UKF), and particle filters. These techniques help integrate data from various sensors to improve the accuracy and robustness of the system's perception.
+
+\subsubsection{Path Planning and Control}
+
+Path planning and control are critical components of self-driving technology. They involve determining a safe and efficient route for the vehicle and ensuring that it follows this route accurately.
+
+\paragraph{Path Planning Algorithms}
+
+\textbf{A* Algorithm:} A* is a popular pathfinding algorithm used to find the shortest path between two points. It uses a heuristic to guide the search, balancing exploration and exploitation.
+
+\textbf{RRT (Rapidly-exploring Random Trees):} RRT is a probabilistic path planning algorithm that incrementally builds a tree by randomly sampling the search space and connecting the samples to the tree.
+
+\paragraph{Control Algorithms}
+
+\textbf{PID Control:} Proportional-Integral-Derivative (PID) control is a feedback control mechanism widely used in autonomous vehicles to maintain a desired trajectory.
+
+\[
+u(t) = K_p e(t) + K_i \int_{0}^{t} e(\tau) d\tau + K_d \frac{de(t)}{dt}
+\]
+
+where \( e(t) \) is the error between the desired and actual positions, and \( K_p \), \( K_i \), and \( K_d \) are the proportional, integral, and derivative gains, respectively.
+
+\textbf{Model Predictive Control (MPC):} MPC is an advanced control strategy that optimizes the control inputs by solving a finite horizon optimization problem at each time step. It takes into account the system dynamics, constraints, and future predictions to generate optimal control actions.
+
+\[
+\min_{u} \sum_{k=0}^{N-1} \left( x_k^T Q x_k + u_k^T R u_k \right) + x_N^T Q_f x_N
+\]
+
+subject to system dynamics and constraints.
+
+\subsubsection{Simultaneous Localization and Mapping (SLAM)}
+
+SLAM is the process of constructing a map of an unknown environment while simultaneously keeping track of the vehicle's location within it.
+
+\paragraph{Extended Kalman Filter SLAM (EKF-SLAM)}
+
+EKF-SLAM uses the extended Kalman filter to estimate the vehicle's pose and the positions of landmarks in the environment.
+
+\paragraph{Particle Filter SLAM (FastSLAM)}
+
+FastSLAM uses a particle filter to estimate the vehicle's pose and a separate Kalman filter for each landmark, allowing it to handle larger and more complex environments.
+
+\paragraph{Graph-Based SLAM}
+
+Graph-based SLAM represents the environment as a graph, with nodes representing poses and landmarks and edges representing constraints. Optimization techniques are used to find the best map and trajectory that satisfy the constraints.
+
+Relative position and orientation between two camera systems in the stereo system is called the epipolar geometry of the stereo system
 
 
 \section{Questions}
@@ -2674,5 +5011,124 @@ In conclusion, latent diffusion models provide a powerful and flexible approach 
   \item Explain the concept of adversarial training in NLP and its potential applications. How can adversarial training be used to improve the robustness and generalization of NLP models?
   \item Compare and contrast the architectures and objectives of OpenAI's GPT-3 and Google's T5 (Text-to-Text Transfer Transformer) models. How do these differences affect their performance and applicability to various NLP tasks?
 \end{enumerate}
+
+\section{Computer Vision Questions}
+
+\subsection{Fundamental Computer Vision Knowledge}
+
+\begin{enumerate}
+    \item What is the difference between semantic segmentation and instance segmentation?
+    \item How do convolutional neural networks (CNNs) work, and why are they effective for image classification tasks?
+    \item Explain the concept of receptive fields in the context of CNNs.
+    \item What are some common data augmentation techniques used in training deep learning models for image classification?
+    \item Describe the process and purpose of non-maximum suppression in object detection.
+    \item What are the main components of the YOLO (You Only Look Once) object detection framework?
+    \item How does batch normalization help in training deep neural networks?
+    \item What are the advantages and disadvantages of using transfer learning in computer vision?
+    \item Explain the concept of overfitting in machine learning and how it can be mitigated in deep learning models.
+    \item Describe the role of the activation function in a neural network. Why is ReLU commonly used?
+    \item Difference between affine/projective transformation? 
+    \item What is the 8-point algorithm? 
+    \item Is the extrinsic matrix known for calibrated stereo? What about uncalibrated? 
+    \item What is the essential matrix? What is the fundamental matrix?
+    \item Explain ROI Pooling and ROI Align, how do they differ?
+    \item What are the key differences between traditional computer vision methods and deep learning approaches?
+    \item How do padding and stride affect the output size of convolutional layers in CNNs?
+    \item Describe the process of image normalization and its significance in training deep learning models.
+    \item How does the sliding window technique work in object detection, and what are its limitations?
+    \item Explain the concept and applications of Hough Transform in computer vision.
+    \item Describe the differences between edge detection techniques like Sobel, Canny, and Laplacian.
+    \item What is the role of histogram equalization in image preprocessing?
+    \item Explain the purpose of the optical flow in computer vision. How is it estimated?
+    \item Describe the role and techniques of feature matching in image stitching and panorama creation.
+    \item 
+\end{enumerate}
+
+\subsection{In-Depth Knowledge of Seminal Approaches/Papers/Frameworks}
+
+\begin{enumerate}
+    \item Describe the architecture and key innovations of AlexNet. Why was it a breakthrough in the field of computer vision?
+    \item Explain the concept of residual connections introduced in ResNet. How do they address the vanishing gradient problem?
+    \item What are the main differences between the Faster R-CNN and YOLO object detection frameworks?
+    \item Discuss the contributions of the paper "Attention is All You Need" to the development of Vision Transformers (ViT).
+    \item Explain the architecture of U-Net and why it is particularly effective for biomedical image segmentation.
+    \item What is the significance of the FPN (Feature Pyramid Network) in the context of object detection and segmentation tasks?
+    \item How does the Swin Transformer improve upon the original Vision Transformer (ViT)?
+    \item Describe the contributions of the Mask R-CNN framework to instance segmentation.
+    \item What are the key innovations of the EfficientNet architecture, and how does it achieve high performance with fewer parameters?
+    \item Discuss the impact of the CLIP model on zero-shot learning and multi-modal understanding in computer vision.
+    \item What are the contributions of the "ImageNet Classification with Deep Convolutional Neural Networks" (AlexNet) paper to the field of computer vision?
+    \item Explain the key innovations and architecture of VGGNet. How does it differ from AlexNet?
+    \item Describe the architecture and significance of the Inception (GoogLeNet) model.
+    \item Explain the role and structure of the Fully Convolutional Network (FCN) for semantic segmentation.
+    \item How does the architecture of DenseNet improve gradient flow and feature reuse in CNNs?
+    \item What are the main contributions of the MobileNets architecture to efficient deep learning models for mobile and embedded vision applications?
+    \item Explain the architecture and key features of the RetinaNet object detection framework.
+    \item Describe the advancements introduced by the HRNet (High-Resolution Network) for human pose estimation.
+    \item Explain the concept and applications of Conditional Random Fields (CRFs) in computer vision.
+    \item What are the key differences between Fast R-CNN, Faster R-CNN, and Mask R-CNN?
+\end{enumerate}
+
+\subsection{Latest Advancements in CV (June 2024)}
+
+\begin{enumerate}
+    \item What are the key features and advancements of the Segment Anything Model (SAM) introduced by Meta AI in 2023?
+    \item Explain how the Swin Transformer achieves hierarchical feature representation using shifted windows.
+    \item Describe the improvements brought by the Data-efficient Image Transformer (DeiT) in terms of data efficiency and training strategies.
+    \item What are the main contributions of the paper introducing Mask2Former, and how does it unify various segmentation tasks?
+    \item Discuss the role of self-supervised learning in recent advancements, particularly focusing on models like DINO.
+    \item What is the significance of ImageBind in the context of multi-modal learning and integration of different data types?
+    \item Explain the architectural innovations of YOLONAS and how it integrates neural architecture search for object detection.
+    \item What are the advantages of using multi-scale vision transformers (MViT) for high-resolution image processing?
+    \item Describe the advancements in adversarial training techniques for segmentation tasks, particularly focusing on recent models.
+    \item How have foundational vision models evolved to address the challenges of high computational complexity and large data requirements?
+    \item What are the architectural innovations and key contributions of the Vision Transformer (ViT)?
+    \item How does the Swin Transformer enhance the Vision Transformer for hierarchical feature learning?
+    \item Describe the contributions and advancements introduced by the ConvNeXt architecture.
+    \item What is the role of self-supervised learning in recent CV models like BYOL and SimCLR?
+    \item Explain the concept of neural architecture search (NAS) and its impact on designing state-of-the-art CV models.
+    \item What are the main features and improvements of the recent YOLOv5 and YOLOv6 up to Yolov8 models compared to their predecessors?
+    \item How does the Mask2Former model unify various segmentation tasks, and what are its main contributions?
+    \item Explain the advancements in neural rendering techniques like Neural Radiance Fields (NeRF).
+    \item What are the key innovations of the latest EfficientDet model for object detection?
+    \item Discuss the role and impact of foundational vision models like CLIP and DALL-E on multi-modal learning and understanding.
+\end{enumerate}
+
+\subsection{SWE Deep Learning/CV Questions}
+\begin{enumerate}
+    \item Describe a time when you optimized a deep learning model for deployment in a resource-constrained environment. What techniques did you use?
+    \item How would you handle the deployment of a computer vision model in a real-time application? Discuss the considerations and steps involved.
+    \item Explain how you would design a pipeline for continuous integration and continuous deployment (CI/CD) for machine learning models.
+    \item What strategies would you employ to monitor the performance and drift of a deployed computer vision model?
+    \item Describe the steps you would take to troubleshoot and debug a deep learning model that is not performing as expected.
+    \item How do you ensure reproducibility in machine learning experiments? Discuss tools and best practices.
+    \item Discuss a time when you had to balance model accuracy with computational efficiency. How did you approach this trade-off?
+    \item Explain the process of converting a trained deep learning model into a format suitable for mobile or edge device deployment (e.g., TensorFlow Lite, ONNX).
+    \item How would you approach the integration of a computer vision system with other software components in a larger application?
+    \item Describe your experience with distributed training of deep learning models. What frameworks have you used, and what challenges did you face?
+    \item Discuss the importance of data preprocessing in computer vision tasks. What are some common preprocessing steps you have implemented?
+    \item How do you handle the versioning of machine learning models and datasets in a collaborative environment?
+    \item Describe a project where you implemented transfer learning. What was the base model, and how did you adapt it to your specific task?
+    \item Explain the concept of model interpretability in deep learning. How do you ensure that your models are interpretable?
+    \item What are some techniques you can use to accelerate the training of deep learning models? Discuss both hardware and software optimizations.
+    \item How do you manage and optimize hyperparameters for deep learning models? Discuss tools and techniques you have used.
+    \item Explain how you would design a computer vision system for a new application, starting from data collection to model deployment.
+    \item Discuss the role of unsupervised learning in computer vision. What are some use cases where it can be effectively applied?
+    \item Describe a situation where you had to work with noisy or low-quality data. How did you handle it, and what impact did it have on your model's performance?
+    \item Explain the concept of model compression. What techniques have you used to compress deep learning models without significantly sacrificing accuracy?
+    \item How do you approach the task of selecting the appropriate model architecture for a given computer vision problem?
+    \item Discuss the use of synthetic data in training computer vision models. What are the benefits and potential drawbacks?
+    \item How do you handle class imbalance in computer vision datasets? Describe any specific techniques or tools you have used.
+    \item What are the key considerations when designing a computer vision system for scalability and robustness?
+    \item Explain the concept of federated learning and its potential applications in computer vision.
+    \item Describe your experience with real-time image or video processing. What challenges did you face, and how did you overcome them?
+    \item How do you evaluate the performance of a computer vision model? Discuss the metrics and validation techniques you use.
+    \item Explain the role of feature extraction in computer vision. How do you decide which features to extract for a given task?
+    \item Describe a situation where you had to work within strict latency requirements for a computer vision application. How did you ensure your model met these requirements?
+    \item Discuss the impact of different activation functions on the training and performance of deep learning models in computer vision.
+
+\end{enumerate}
+
+For more questions, refer to \href{https://www.projectpro.io/article/computer-vision-engineer-interview-questions/450}{this interview guide}
 
 \end{document}
